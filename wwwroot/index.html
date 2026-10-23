@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="dashboardPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Sistema White Label</h1>
+        <p>Visão geral do desempenho do negócio · líquido = com desconto, bruto = sem desconto</p>
+      </div>
+      <div class="segmented" aria-label="Período do dashboard">
+        <button class="segment" data-range="today">Hoje</button>
+        <button class="segment" data-range="7">Últimos 7 dias</button>
+        <button class="segment active" data-range="30">Últimos 30 dias</button>
+        <button class="segment" data-range="month">Este mês</button>
+        <button class="segment" data-range="prev">Mês anterior</button>
+      </div>
+    </div>
+
+    <section class="metrics">
+      <article class="card metric">
+        <div class="metric-label">Vendas realizadas</div>
+        <div class="metric-value" id="metricSales">0</div>
+        <div class="metric-foot">No período selecionado</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Faturamento líquido</div>
+        <div class="metric-value" id="metricNet">R$ 0,00</div>
+        <div class="metric-foot">Já com os descontos</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Faturamento bruto</div>
+        <div class="metric-value" id="metricGross">R$ 0,00</div>
+        <div class="metric-foot" id="metricGrossFoot">Descontos: R$ 0,00</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Produtos vendidos</div>
+        <div class="metric-value" id="metricProducts">0</div>
+        <div class="metric-foot">Unidades vendidas</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Ticket médio (líquido)</div>
+        <div class="metric-value" id="metricTicket">R$ 0,00</div>
+        <div class="metric-foot" id="metricTicketFoot">Bruto: R$ 0,00</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Sem estoque</div>
+        <div class="metric-value" id="metricStock">0</div>
+        <div class="metric-foot">Produtos zerados</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Estoque baixo</div>
+        <div class="metric-value" id="metricLow">0</div>
+        <div class="metric-foot">Abaixo do mínimo de cada produto</div>
+      </article>
+      <article class="card metric" data-module-card="fiado" style="display:none">
+        <div class="metric-label">Fiado a receber</div>
+        <div class="metric-value" id="metricFiado">R$ 0,00</div>
+        <div class="metric-foot" id="metricFiadoFoot"></div>
+      </article>
+    </section>
+
+    <section class="dashboard-stack">
+      <article class="card chart-card">
+        <div class="chart-head">
+          <h2 class="section-title">Evolução das vendas</h2>
+        </div>
+        <div class="chart-box" id="salesChart"></div>
+      </article>
+
+      <div class="grid-2">
+        <article class="card chart-card">
+          <h2 class="section-title">Produtos mais vendidos</h2>
+          <div id="topProducts"></div>
+        </article>
+        <article class="card chart-card">
+          <h2 class="section-title">Faturamento por produto (líquido)</h2>
+          <div id="revenueProducts"></div>
+        </article>
+      </div>
+
+      <div class="grid-2">
+        <article class="card chart-card">
+          <h2 class="section-title">Vendas por categoria</h2>
+          <div id="categorySales"></div>
+        </article>
+        <article class="card chart-card">
+          <h2 class="section-title">Formas de pagamento</h2>
+          <div id="paymentSales"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

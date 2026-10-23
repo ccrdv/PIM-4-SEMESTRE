@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Histórico de Vendas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="historyPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Histórico de Vendas</h1>
+        <p id="historySummary">0 vendas</p>
+      </div>
+      <div class="segmented">
+        <button class="segment" data-history-range="today">Hoje</button>
+        <button class="segment" data-history-range="7">Últimos 7 dias</button>
+        <button class="segment active" data-history-range="30">Últimos 30 dias</button>
+        <button class="segment" data-history-range="month">Este mês</button>
+        <button class="segment" data-history-range="prev">Mês anterior</button>
+      </div>
+    </div>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <input class="input" id="historySearch" type="search" placeholder="Buscar por número, cliente ou produto..." style="flex:1">
+        <div class="field" style="min-width:180px">
+          <label for="historyDate">Dia específico</label>
+          <input class="input" id="historyDate" type="date">
+        </div>
+        <div class="field" style="min-width:170px">
+          <label for="historyPayment">Pagamento</label>
+          <select class="select" id="historyPayment"></select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Venda</th>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Cliente</th>
+              <th>Itens</th>
+              <th>Pagamento</th>
+              <th>Bruto</th>
+              <th>Desconto</th>
+              <th>Líquido</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="saleModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="saleModalTitle">Venda</h2>
+        <button class="close-btn" id="closeSaleModal">×</button>
+      </div>
+      <div id="saleModalBody"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="closeSaleModal2">Fechar</button>
+        <button class="btn btn-primary" type="button" id="saleModalPdf">Baixar comprovante (PDF)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

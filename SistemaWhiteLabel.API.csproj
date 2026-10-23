@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Código antigo do fiado: fora da compilação até virar módulo (próxima etapa) -->
+    <Compile Remove="Modules\FiadoAntigo\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Arquivos da versao antiga (banco antigo) que nao existem mais neste projeto.
+         Se ainda estiverem na sua pasta, o compilador os ignora. Depois de apagar os arquivos
+         (veja limpar_arquivos_antigos.ps1) estas linhas podem ser removidas. -->
+    <Compile Remove="Controllers\FiadoController.cs" />
+    <Compile Remove="DTOs\FiadoDto.cs" />
+    <Compile Remove="DTOs\HistoricoFiadoDto.cs" />
+    <Compile Remove="DTOs\PagamentoFiadoDto.cs" />
+    <Compile Remove="Models\Cliente.cs" />
+    <Compile Remove="Repositories\ClienteRepository.cs" />
+    <Compile Remove="Repositories\Interfaces\IClienteRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GoogleAuthenticator" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.26" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.0" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="8.21.210" />
+    <PackageReference Include="QuestPDF" Version="2026.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

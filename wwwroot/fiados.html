@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Fiados</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="fiadoPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Vendas Fiadas</h1>
+        <p>Vendas a prazo, recebimentos e recibos</p>
+      </div>
+    </div>
+
+    <section class="metrics">
+      <article class="card metric">
+        <div class="metric-label">Total a receber</div>
+        <div class="metric-value" id="fiadoTotal">R$ 0,00</div>
+        <div class="metric-foot">Saldo de todos os clientes</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Clientes devedores</div>
+        <div class="metric-value" id="fiadoDebtors">0</div>
+        <div class="metric-foot">Com saldo em aberto</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Vendas pendentes</div>
+        <div class="metric-value" id="fiadoPending">0</div>
+        <div class="metric-foot">Ainda não quitadas</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Recebido hoje</div>
+        <div class="metric-value" id="fiadoToday">R$ 0,00</div>
+        <div class="metric-foot">Pagamentos de fiado</div>
+      </article>
+    </section>
+
+    <div class="grid-2">
+      <section class="card card-pad">
+        <h2 class="section-title">Clientes com débito</h2>
+        <div class="order-list" id="debtorList"></div>
+      </section>
+      <section class="card card-pad">
+        <h2 class="section-title">Vendas pendentes</h2>
+        <div class="order-list" id="pendingList"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="fiadoHistoryModal">
+    <div class="modal" style="max-width:760px">
+      <div class="modal-head">
+        <h2 id="fiadoHistoryTitle">Histórico</h2>
+        <button class="close-btn" id="closeFiadoHistory">×</button>
+      </div>
+      <div class="hist-totals">
+        <div><div class="muted">Total em débitos</div><strong id="fiadoHistTotal">R$ 0,00</strong></div>
+        <div><div class="muted">Total pago</div><strong id="fiadoHistPaid">R$ 0,00</strong></div>
+        <div><div class="muted">Saldo atual</div><strong id="fiadoHistBalance">R$ 0,00</strong></div>
+      </div>
+      <div class="table-wrap" style="max-height:380px;overflow:auto">
+        <table class="table">
+          <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Saldo</th></tr></thead>
+          <tbody id="fiadoHistoryBody"></tbody>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="closeFiadoHistory2">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

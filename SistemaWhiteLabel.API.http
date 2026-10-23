@@ -1,0 +1,24 @@
+@host = https://localhost:7125
+@accessToken = COLE_O_ACCESS_TOKEN_AQUI
+
+### Os módulos e se estão ligados (precisa do token de sessão: veja SistemaWhiteLabel.Auth.http)
+GET {{host}}/api/Modulos
+Authorization: Bearer {{accessToken}}
+
+### Desligar o módulo de fiado (só o perfil Administrador)
+PUT {{host}}/api/Modulos/fiado
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "ativo": false }
+
+### Ligar o módulo de fiado
+PUT {{host}}/api/Modulos/fiado
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "ativo": true }
+
+### Com o módulo desligado esta rota responde 404
+GET {{host}}/api/Fiado/resumo
+Authorization: Bearer {{accessToken}}

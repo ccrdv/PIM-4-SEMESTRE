@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Produtos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="productsPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Produtos</h1>
+        <p id="productCount">0 produtos cadastrados</p>
+      </div>
+      <button class="btn btn-primary" id="newProduct">＋ Novo produto</button>
+    </div>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <input class="input" id="productSearch" type="search" placeholder="Buscar por nome ou ID..." style="flex:1">
+        <select class="select" id="productCategoryFilter" style="max-width:220px"></select>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Custo</th>
+              <th>Venda</th>
+              <th>Margem</th>
+              <th>Lucro/un</th>
+              <th>Estoque</th>
+              <th>Mínimo</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="productModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="productModalTitle">Novo produto</h2>
+        <button class="close-btn" id="closeProductModal">×</button>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="modal-grid">
+          <div class="field">
+            <label for="productName">Nome</label>
+            <input class="input" id="productName" required>
+          </div>
+          <div class="field">
+            <label for="productCategory">Categoria</label>
+            <select class="select" id="productCategory" required></select>
+          </div>
+          <div class="field">
+            <label for="productCost">Preço de custo</label>
+            <input class="input" id="productCost" type="number" min="0" step="0.01" required>
+          </div>
+          <div class="field">
+            <label for="productPrice">Preço de venda</label>
+            <input class="input" id="productPrice" type="number" min="0" step="0.01" required>
+          </div>
+          <div class="field">
+            <label for="productStock">Estoque atual</label>
+            <input class="input" id="productStock" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label for="productMin">Estoque mínimo (alerta)</label>
+            <input class="input" id="productMin" type="number" min="0" step="1" value="10">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="cancelProduct">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Salvar produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

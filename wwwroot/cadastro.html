@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Cadastros</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="registerPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Cadastros</h1>
+        <p>Categorias de produtos (a categoria padrão é "Geral")</p>
+      </div>
+    </div>
+
+    <section class="card card-pad" style="max-width:760px">
+      <h2 class="section-title">Categorias de produtos</h2>
+      <form id="categoryForm" class="toolbar" style="align-items:end">
+        <div class="field" style="flex:1">
+          <label for="categoryName">Nome da categoria</label>
+          <input class="input" id="categoryName" placeholder="Ex.: Refrigerantes" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Cadastrar</button>
+      </form>
+      <div class="order-list" id="categoryList" style="margin-top:18px"></div>
+    </section>
+  </main>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

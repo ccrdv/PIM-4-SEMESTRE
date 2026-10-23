@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Clientes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="customersPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Clientes</h1>
+        <p id="customerCount">0 clientes cadastrados</p>
+      </div>
+      <button class="btn btn-primary" id="newCustomer">＋ Novo cliente</button>
+    </div>
+
+    <section class="card card-pad">
+      <input class="input" id="customerSearch" type="search" placeholder="Buscar por nome, CPF ou telefone...">
+      <div class="cards-grid" id="customersGrid" style="margin-top:14px"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="customerModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="customerModalTitle">Novo cliente</h2>
+        <button class="close-btn" id="closeCustomerModal">×</button>
+      </div>
+      <form id="customerForm">
+        <input type="hidden" id="customerId">
+        <div class="modal-grid">
+          <div class="field">
+            <label for="customerName">Nome</label>
+            <input class="input" id="customerName" required>
+          </div>
+          <div class="field">
+            <label for="customerCpf">CPF (obrigatório)</label>
+            <input class="input" id="customerCpf" inputmode="numeric" placeholder="000.000.000-00" required>
+          </div>
+          <div class="field">
+            <label for="customerPhone">Telefone</label>
+            <input class="input" id="customerPhone">
+          </div>
+          <div class="field">
+            <label for="customerAddress">Endereço</label>
+            <input class="input" id="customerAddress">
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label for="customerNotes">Observações</label>
+          <textarea class="textarea" id="customerNotes"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="cancelCustomer">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Salvar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

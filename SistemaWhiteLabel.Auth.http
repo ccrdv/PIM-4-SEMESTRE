@@ -1,0 +1,42 @@
+@host = https://localhost:7125
+
+### 1) ETAPA 1 - usuario e senha. Copie o "tokenTemporario" da resposta
+POST {{host}}/api/Auth/login
+Content-Type: application/json
+
+{ "username": "admin", "senha": "admin123" }
+
+### 2a) PRIMEIRO ACESSO - gera a chave do autenticador (guarde a "chave" e a "uriOtpAuth")
+@tokenTemporario = COLE_O_TOKEN_TEMPORARIO_AQUI
+POST {{host}}/api/Auth/2fa/configurar
+Authorization: Bearer {{tokenTemporario}}
+
+### 2b) PRIMEIRO ACESSO - confirma o primeiro codigo (chave devolvida acima + codigo do app)
+POST {{host}}/api/Auth/2fa/ativar
+Authorization: Bearer {{tokenTemporario}}
+Content-Type: application/json
+
+{ "chave": "COLE_A_CHAVE_AQUI", "codigo": "123456" }
+
+### 2c) ACESSOS SEGUINTES - codigo do app
+POST {{host}}/api/Auth/2fa/verificar
+Authorization: Bearer {{tokenTemporario}}
+Content-Type: application/json
+
+{ "codigo": "123456" }
+
+### 3) O token temporario NAO abre o sistema (esperado: 403)
+GET {{host}}/api/Produto
+Authorization: Bearer {{tokenTemporario}}
+
+### 4) Sessao completa (copie o "accessToken" da etapa 2) - esperado: 200
+@accessToken = COLE_O_ACCESS_TOKEN_AQUI
+GET {{host}}/api/Produto
+Authorization: Bearer {{accessToken}}
+
+### 5) Mostra quando a sessao termina
+GET {{host}}/api/Auth/check-token
+Authorization: Bearer {{accessToken}}
+
+### 6) Sem token (esperado: 401)
+GET {{host}}/api/Produto

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Estoque</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="stockPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Estoque</h1>
+        <p>Entradas e saídas manuais · as vendas baixam o estoque sozinhas</p>
+      </div>
+    </div>
+
+    <section class="metrics">
+      <article class="card metric">
+        <div class="metric-label">Total de produtos</div>
+        <div class="metric-value" id="stockTotal">0</div>
+        <div class="metric-foot">Cadastrados</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Estoque baixo</div>
+        <div class="metric-value" id="stockLow">0</div>
+        <div class="metric-foot">Abaixo do mínimo de cada produto</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Sem estoque</div>
+        <div class="metric-value" id="stockZero">0</div>
+        <div class="metric-foot">Produtos zerados</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Valor em estoque (venda)</div>
+        <div class="metric-value" id="stockValue">R$ 0,00</div>
+        <div class="metric-foot">Preço de venda × quantidade</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Valor em estoque (custo)</div>
+        <div class="metric-value" id="stockCost">R$ 0,00</div>
+        <div class="metric-foot">Preço de custo × quantidade</div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <input class="input" id="stockSearch" type="search" placeholder="Buscar por nome ou ID..." style="flex:1">
+        <select class="select" id="stockCategoryFilter" style="max-width:220px"></select>
+        <select class="select" id="stockStatusFilter" style="max-width:200px">
+          <option value="">Todos os status</option>
+          <option value="good">Disponível</option>
+          <option value="warn">Estoque baixo</option>
+          <option value="bad">Sem estoque</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Estoque</th>
+              <th>Mínimo</th>
+              <th>Valor total</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="stockBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="stockModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="stockModalTitle">Ajustar estoque</h2>
+        <button class="close-btn" id="closeStockModal">×</button>
+      </div>
+      <form id="stockForm">
+        <input type="hidden" id="stockProductId">
+        <p class="muted" id="stockCurrent"></p>
+        <div class="modal-grid">
+          <div class="field">
+            <label for="stockMode">Operação</label>
+            <select class="select" id="stockMode">
+              <option value="add">Adicionar (entrada)</option>
+              <option value="remove">Remover (saída)</option>
+              <option value="set">Definir quantidade</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="stockQty">Quantidade</label>
+            <input class="input" id="stockQty" type="number" min="0" step="1" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="cancelStock">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

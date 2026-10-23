@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Nova Venda</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="salesPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Nova Venda</h1>
+        <p>Monte o carrinho e finalize o pagamento</p>
+      </div>
+    </div>
+
+    <section class="pdv">
+      <article class="card products-panel">
+        <input class="input" id="saleProductSearch" type="search" placeholder="Buscar produto por nome ou ID...">
+        <div class="product-grid" id="saleProducts"></div>
+      </article>
+
+      <aside class="card cart-panel">
+        <h2 class="section-title">Carrinho</h2>
+        <div class="cart-list" id="cartList"></div>
+
+        <div class="field">
+          <label for="saleCustomer">Cliente (opcional)</label>
+          <select class="select" id="saleCustomer"></select>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label for="saleDiscount">Desconto na venda (R$)</label>
+          <input class="input" id="saleDiscount" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="section-title">Forma de pagamento</div>
+          <div class="pay-grid" id="payGrid"></div>
+        </div>
+
+        <div class="summary" style="margin-top:16px">
+          <div class="summary-row"><span>Subtotal (bruto)</span><strong id="saleSubtotal">R$ 0,00</strong></div>
+          <div class="summary-row"><span>Desconto</span><strong id="saleDiscountValue">- R$ 0,00</strong></div>
+          <div class="summary-row total"><span>Total (líquido)</span><strong id="saleTotal">R$ 0,00</strong></div>
+        </div>
+
+        <button class="btn btn-primary" id="finishSale" style="width:100%;margin-top:16px">Finalizar venda · R$ 0,00</button>
+        <div class="muted" id="cartCount" style="text-align:center;margin-top:10px;font-size:12px">0 item(ns) no carrinho</div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="doneModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Venda concluída</h2>
+      </div>
+      <p id="doneInfo"></p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="doneClose">Nova venda</button>
+        <button class="btn btn-primary" type="button" id="donePdf">Baixar comprovante (PDF)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Configurações</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="settingsPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Configurações</h1>
+        <p>Preferências e módulos do sistema</p>
+      </div>
+    </div>
+
+    <section class="card card-pad" style="max-width:760px">
+      <div class="setting-row" style="border-top:0">
+        <div>
+          <strong>Tema escuro</strong>
+          <div class="muted">Alterna entre tema claro e escuro.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="darkTheme">
+          <span></span>
+        </label>
+      </div>
+
+      <h2 class="section-title" style="margin-top:24px">Módulos</h2>
+      <div class="muted">Só o perfil Administrador liga e desliga.</div>
+      <div id="modulesList"></div>
+
+      <div class="setting-row">
+        <div>
+          <strong>Sair da conta</strong>
+          <div class="muted" id="userInfo"></div>
+        </div>
+        <button class="btn btn-danger" id="logoutBtn">Sair</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>

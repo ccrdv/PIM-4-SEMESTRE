@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sistema White Label - Fiados</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"/>
+</head>
+
+<body>
+
+    <div class="container-principal">
+        <nav class="menu-lateral">
+            <div class="logo">
+                <h1>SISTEMA WHITE LABEL</h1>
+                <span>Sistema de Vendas</span>
+            </div>
+            <ul class="lista-menu">
+                <li class="item-menu" id="menuInicio" onclick="clickInicio()"><i class="fa-solid fa-house"></i>  Início</li>
+                <li class="item-menu" id="menuVenda" onclick="clickMenuVenda()"><i class="fa-solid fa-cart-shopping"></i>  Vendas</li>
+                <li class="item-menu" id="menuEstoque" onclick="clickMenuEstoque()"><i class="fa-brands fa-stack-overflow"></i>  Estoque</li>
+                <li class="item-menu" id="menuProdutos" onclick="clickMenuProdutos()"><i class="fa-brands fa-product-hunt"></i>  Produtos</li>
+                <li class="item-menu" id="menuClientes" onclick="clickMenuClientes()"><i class="fa-solid fa-user-group"></i>  Clientes</li>
+                <li data-modulo="fiado" class="item-menu ativo" id="menuFiado" onclick="clickMenuFiado()"><i class="fa-solid fa-sack-dollar"></i>  Fiados</li>
+            </ul>
+        </nav>
+
+        <main class="conteudo">
+            <header class="cabecalho">
+                <h2>Vendas Fiadas</h2>
+                <p>Gerencie vendas a prazo e cobranças</p>
+            </header>
+
+            <section class="grade-cards">
+                <div class="card-info">
+                    <div class="icone-quadrado amarelo-claro">
+                        <span class="simbolo-dinheiro">$</span>
+                    </div>
+                    <div>
+                        <p class="titulo-card">Total a Receber</p>
+                        <span class="valor-card" id="totalReceberFiado">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="icone-quadrado vermelho-claro">
+                        <span class="simbolo-usuario"><i class="fa-solid fa-circle-user"></i></span>
+                    </div>
+                    <div>
+                        <p class="titulo-card">Clientes Devedores</p>
+                        <span class="valor-card" id="clientesDevedores">0</span>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="icone-quadrado azul-claro">
+                        <span class="simbolo-calendario"><i class="fa-solid fa-calendar"></i></span>
+                    </div>
+                    <div>
+                        <p class="titulo-card">Vendas Pendentes</p>
+                        <span class="valor-card" id="vendasPendentes">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grade-fiados">
+                <div class="bloco-pendencia">
+                    <h3>Clientes com Débito</h3>
+                    <div id="listaClientesDebito" style="max-height: 400px; overflow-y: auto;">
+                        <div class="centro-vazio">
+                            <div class="circulo-sucesso">✓</div>
+                            <p>Nenhum débito pendente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bloco-pendencia">
+                    <h3>Vendas Pendentes</h3>
+                    <div id="listaVendasPendentes" style="max-height: 400px; overflow-y: auto;">
+                        <div class="centro-vazio">
+                            <div class="circulo-sucesso">✓</div>
+                            <p>Nenhuma venda fiada pendente</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div id="modalHistorico" class="modal">
+        <div class="modal_content" style="max-width: 700px;">
+            <span class="close" onclick="fecharModalHistorico()">&times;</span>
+            <h2 id="historicoClienteNome">Histórico do Cliente</h2>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <p style="font-size: 12px; color: #6b7280;">Total em Débitos</p>
+                        <p style="font-size: 20px; font-weight: bold; color: #ef4444;" id="totalGeral">R$ 0,00</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 12px; color: #6b7280;">Total Pago</p>
+                        <p style="font-size: 20px; font-weight: bold; color: #10b981;" id="totalPago">R$ 0,00</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 12px; color: #6b7280;">Saldo Atual</p>
+                        <p style="font-size: 20px; font-weight: bold; color: #f59e0b;" id="saldoAtual">R$ 0,00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="position: sticky; top: 0; background: white;">
+                        <tr style="border-bottom: 2px solid #e5e7eb;">
+                            <th style="padding: 12px; text-align: left;">Data</th>
+                            <th style="padding: 12px; text-align: left;">Tipo</th>
+                            <th style="padding: 12px; text-align: left;">Descrição</th>
+                            <th style="padding: 12px; text-align: right;">Valor</th>
+                            <th style="padding: 12px; text-align: right;">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historicoTransacoes">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px;">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="form-btns" style="margin-top: 20px;">
+                <button type="button" class="btn-cancel" onclick="fecharModalHistorico()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js?v=8"></script>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

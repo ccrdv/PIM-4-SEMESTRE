@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="login-page">
+    <section class="card login-card">
+      <h1>Sistema White Label</h1>
+
+      <!-- ETAPA 1 -->
+      <div id="stepLogin">
+        <p>Entre com seu usuário e senha.</p>
+        <form class="login-form" id="loginForm">
+          <div class="field">
+            <label for="loginUser">Usuário</label>
+            <input class="input" id="loginUser" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="loginPassword">Senha</label>
+            <input class="input" id="loginPassword" type="password" autocomplete="current-password" required>
+          </div>
+          <div class="login-error"></div>
+          <button class="btn btn-primary" type="submit">Continuar</button>
+        </form>
+      </div>
+
+      <!-- ETAPA 2: código do aplicativo (acessos seguintes) -->
+      <div id="step2faCode" style="display:none">
+        <p>Digite o código de 6 dígitos do seu aplicativo autenticador.</p>
+        <form class="login-form" id="twoFaForm">
+          <div class="field">
+            <label for="code2fa">Código</label>
+            <input class="input" id="code2fa" inputmode="numeric" maxlength="7" autocomplete="one-time-code" required>
+          </div>
+          <div class="login-error"></div>
+          <button class="btn btn-primary" type="submit">Entrar</button>
+          <a href="#" data-back-login class="muted" style="text-align:center">Voltar</a>
+        </form>
+      </div>
+
+      <!-- ETAPA 2: primeiro acesso (cadastrar o aplicativo) -->
+      <div id="step2faSetup" style="display:none">
+        <p>Primeiro acesso: no Microsoft ou Google Authenticator, adicione uma conta lendo o QR Code (ou digitando a chave).</p>
+        <div class="qr-box" id="qrcode"></div>
+        <div class="key-box" id="setupKey"></div>
+        <form class="login-form" id="setupForm" style="margin-top:14px">
+          <div class="field">
+            <label for="codeSetup">Código mostrado no aplicativo</label>
+            <input class="input" id="codeSetup" inputmode="numeric" maxlength="7" autocomplete="one-time-code" required>
+          </div>
+          <div class="login-error"></div>
+          <button class="btn btn-primary" type="submit">Ativar e entrar</button>
+          <a href="#" data-back-login class="muted" style="text-align:center">Voltar</a>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- QR Code do 2FA (se não carregar, a chave digitada continua funcionando) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script src="script.js?v=11"></script>
+</body>
+</html>
