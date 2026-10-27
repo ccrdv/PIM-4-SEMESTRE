@@ -61,6 +61,46 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+
+    // Token de celular (claim "did"): além da assinatura, a sessão precisa estar valida em tb_dispositivo
+    // (não vencida, não desconectada pelo PC, usuário ativo). Token do PC não passa por aqui.
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var did = context.Principal?.FindFirst("did")?.Value;
+            if (did == null)
+                return;
+
+            var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+            var agora = DateTime.Now;
+
+            if (!int.TryParse(did, out var idDispositivo))
+            {
+                context.Fail("Sessão do aparelho inválida.");
+                return;
+            }
+
+            var dispositivo = await db.Dispositivos.FirstOrDefaultAsync(d =>
+                d.IdDispositivo == idDispositivo &&
+                d.RevogadoEm == null &&
+                d.ExpiraEm > agora &&
+                d.Usuario!.Status == "Ativo");
+
+            if (dispositivo == null)
+            {
+                context.Fail("Sessão do aparelho vencida ou desconectada.");
+                return;
+            }
+
+            // Marca o último uso (no máximo uma vez por minuto)
+            if ((dispositivo.UltimoUso ?? dispositivo.CriadoEm) < agora.AddMinutes(-1))
+            {
+                dispositivo.UltimoUso = agora;
+                await db.SaveChangesAsync();
+            }
+        }
+    };
 });
 
 // ========== AUTORIZAÇÃO (LOGIN EM 2 ETAPAS) ==========
@@ -95,6 +135,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 builder.Services.AddScoped<IModuloService, ModuloService>();
+builder.Services.AddScoped<IDispositivoService, DispositivoService>();
 builder.Services.AddScoped<ComprovanteService>();
 
 // ====================== MÓDULOS ======================

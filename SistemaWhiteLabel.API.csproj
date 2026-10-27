@@ -19,6 +19,7 @@
     <Compile Remove="DTOs\FiadoDto.cs" />
     <Compile Remove="DTOs\HistoricoFiadoDto.cs" />
     <Compile Remove="DTOs\PagamentoFiadoDto.cs" />
+    <Compile Remove="Migrations\**" />   <!-- migrações do EF não são mais usadas: o banco muda pelos scripts da pasta Banco -->
     <Compile Remove="Models\Cliente.cs" />
     <Compile Remove="Repositories\ClienteRepository.cs" />
     <Compile Remove="Repositories\Interfaces\IClienteRepository.cs" />

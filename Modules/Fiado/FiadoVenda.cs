@@ -4,8 +4,8 @@ using SistemaWhiteLabel.API.Models;
 
 namespace SistemaWhiteLabel.API.Modules.Fiado
 {
-    // Uma linha para cada venda feita no fiado (tbl_Fiado).
-    // O saldo não é gravado: Valor_Original - soma dos pagamentos da venda (tbl_Forma_Pagamento)
+    // Uma linha para cada venda feita no fiado (tb_fiado).
+    // O saldo não é gravado: valor_original - soma dos pagamentos da venda (tb_forma_pagamento)
     public class FiadoVenda
     {
         public int IdFiado { get; set; }

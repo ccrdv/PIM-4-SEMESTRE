@@ -23,6 +23,7 @@ namespace SistemaWhiteLabel.API.Data
         public DbSet<TipoPagamento> TiposPagamento { get; set; }
         public DbSet<Modulo> Modulos { get; set; }
         public DbSet<FiadoVenda> Fiados { get; set; }
+        public DbSet<Dispositivo> Dispositivos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,27 +34,27 @@ namespace SistemaWhiteLabel.API.Data
             // ====================== PESSOA ======================
             modelBuilder.Entity<Pessoa>(entity =>
             {
-                entity.ToTable("tbl_Pessoa");
+                entity.ToTable("tb_pessoa");
                 entity.HasKey(p => p.IdPessoa);
-                entity.Property(p => p.IdPessoa).HasColumnName("Id_Pessoa");
-                entity.Property(p => p.Nome).HasColumnName("Nome_Pessoa").IsRequired().HasMaxLength(100);
-                entity.Property(p => p.Cpf).HasColumnName("CPF_Pessoa").IsRequired().HasMaxLength(11);
-                entity.Property(p => p.Telefone).HasColumnName("Telefone_Pessoa").HasMaxLength(15);
-                entity.Property(p => p.Observacao).HasColumnName("Observacao_Pessoa").HasMaxLength(500);
+                entity.Property(p => p.IdPessoa).HasColumnName("id_pessoa");
+                entity.Property(p => p.Nome).HasColumnName("nome_pessoa").IsRequired().HasMaxLength(100);
+                entity.Property(p => p.Cpf).HasColumnName("cpf_pessoa").IsRequired().HasMaxLength(11);
+                entity.Property(p => p.Telefone).HasColumnName("telefone_pessoa").HasMaxLength(15);
+                entity.Property(p => p.Observacao).HasColumnName("observacao_pessoa").HasMaxLength(500);
             });
 
             // ====================== ENDERECO ======================
             modelBuilder.Entity<Endereco>(entity =>
             {
-                entity.ToTable("tbl_Endereco");
+                entity.ToTable("tb_endereco");
                 entity.HasKey(e => e.IdEndereco);
-                entity.Property(e => e.IdEndereco).HasColumnName("Id_Endereco");
-                entity.Property(e => e.Logradouro).HasColumnName("Logradouro").IsRequired().HasMaxLength(150);
-                entity.Property(e => e.Numero).HasColumnName("Numero");
-                entity.Property(e => e.Bairro).HasColumnName("Bairro").HasMaxLength(100);
-                entity.Property(e => e.Cep).HasColumnName("CEP").HasMaxLength(9);
-                entity.Property(e => e.IdPessoa).HasColumnName("Id_Pessoa");
-                entity.Property(e => e.IdMunicipio).HasColumnName("Id_Municipio");
+                entity.Property(e => e.IdEndereco).HasColumnName("id_endereco");
+                entity.Property(e => e.Logradouro).HasColumnName("logradouro").IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Numero).HasColumnName("numero");
+                entity.Property(e => e.Bairro).HasColumnName("bairro").HasMaxLength(100);
+                entity.Property(e => e.Cep).HasColumnName("cep").HasMaxLength(9);
+                entity.Property(e => e.IdPessoa).HasColumnName("id_pessoa");
+                entity.Property(e => e.IdMunicipio).HasColumnName("id_municipio");
 
                 entity.HasOne(e => e.Pessoa)
                     .WithMany(p => p.Enderecos)
@@ -64,11 +65,11 @@ namespace SistemaWhiteLabel.API.Data
             // Extensão 1:1 de Pessoa: a chave primária é o próprio Id_Pessoa
             modelBuilder.Entity<Funcionario>(entity =>
             {
-                entity.ToTable("tbl_Funcionario");
+                entity.ToTable("tb_funcionario");
                 entity.HasKey(f => f.IdPessoa);
-                entity.Property(f => f.IdPessoa).HasColumnName("Id_Pessoa").ValueGeneratedNever();
-                entity.Property(f => f.Cargo).HasColumnName("Cargo").IsRequired().HasMaxLength(50);
-                entity.Property(f => f.Salario).HasColumnName("Salario").HasPrecision(12, 2);
+                entity.Property(f => f.IdPessoa).HasColumnName("id_pessoa").ValueGeneratedNever();
+                entity.Property(f => f.Cargo).HasColumnName("cargo").IsRequired().HasMaxLength(50);
+                entity.Property(f => f.Salario).HasColumnName("salario").HasPrecision(12, 2);
 
                 entity.HasOne(f => f.Pessoa)
                     .WithOne(p => p.Funcionario)
@@ -78,49 +79,49 @@ namespace SistemaWhiteLabel.API.Data
             // ====================== PERFIL ======================
             modelBuilder.Entity<Perfil>(entity =>
             {
-                entity.ToTable("tbl_Perfil");
+                entity.ToTable("tb_perfil");
                 entity.HasKey(p => p.IdPerfil);
-                entity.Property(p => p.IdPerfil).HasColumnName("Id_Perfil");
-                entity.Property(p => p.Nome).HasColumnName("Nome_Perfil").IsRequired().HasMaxLength(50);
-                entity.Property(p => p.Descricao).HasColumnName("Descricao_Perfil").HasMaxLength(200);
+                entity.Property(p => p.IdPerfil).HasColumnName("id_perfil");
+                entity.Property(p => p.Nome).HasColumnName("nome_perfil").IsRequired().HasMaxLength(50);
+                entity.Property(p => p.Descricao).HasColumnName("descricao_perfil").HasMaxLength(200);
             });
 
             // ====================== CATEGORIA ======================
             modelBuilder.Entity<Categoria>(entity =>
             {
-                entity.ToTable("tbl_Categoria");
+                entity.ToTable("tb_categoria");
                 entity.HasKey(c => c.IdCategoria);
-                entity.Property(c => c.IdCategoria).HasColumnName("Id_Categoria");
-                entity.Property(c => c.Descricao).HasColumnName("Descricao").IsRequired().HasMaxLength(500);
+                entity.Property(c => c.IdCategoria).HasColumnName("id_categoria");
+                entity.Property(c => c.Descricao).HasColumnName("descricao").IsRequired().HasMaxLength(500);
             });
 
             // ====================== PRODUTO ======================
             modelBuilder.Entity<Produto>(entity =>
             {
-                entity.ToTable("tbl_Produto");
+                entity.ToTable("tb_produto");
                 entity.HasKey(p => p.IdProduto);
-                entity.Property(p => p.IdProduto).HasColumnName("Id_Produto");
-                entity.Property(p => p.Descricao).HasColumnName("Descricao_Produto").IsRequired().HasMaxLength(500);
-                entity.Property(p => p.PrecoCompra).HasColumnName("Preco_Compra_Produto").HasPrecision(12, 2);
-                entity.Property(p => p.PrecoVenda).HasColumnName("Preco_Venda_Produto").HasPrecision(12, 2);
-                entity.Property(p => p.Qtde).HasColumnName("QDTE_Produto");
-                entity.Property(p => p.EstoqueMinimo).HasColumnName("Estoque_Minimo_Produto");
-                entity.Property(p => p.IdCategoria).HasColumnName("Id_Categoria");
-                entity.Property(p => p.IdUnidadeMedida).HasColumnName("Id_Unidade_Medida");
+                entity.Property(p => p.IdProduto).HasColumnName("id_produto");
+                entity.Property(p => p.Descricao).HasColumnName("descricao_produto").IsRequired().HasMaxLength(500);
+                entity.Property(p => p.PrecoCompra).HasColumnName("preco_compra_produto").HasPrecision(12, 2);
+                entity.Property(p => p.PrecoVenda).HasColumnName("preco_venda_produto").HasPrecision(12, 2);
+                entity.Property(p => p.Qtde).HasColumnName("qdte_produto");
+                entity.Property(p => p.EstoqueMinimo).HasColumnName("estoque_minimo_produto");
+                entity.Property(p => p.IdCategoria).HasColumnName("id_categoria");
+                entity.Property(p => p.IdUnidadeMedida).HasColumnName("id_unidade_medida");
             });
 
             // ====================== USUARIO ======================
             modelBuilder.Entity<Usuario>(entity =>
             {
-                entity.ToTable("tbl_Usuario");
+                entity.ToTable("tb_usuario");
                 entity.HasKey(u => u.IdUsuario);
-                entity.Property(u => u.IdUsuario).HasColumnName("Id_Usuario");
-                entity.Property(u => u.Username).HasColumnName("UserName");
-                entity.Property(u => u.Senha).HasColumnName("Senha");
-                entity.Property(u => u.Status).HasColumnName("Status");
-                entity.Property(u => u.Chave2FA).HasColumnName("Chave_2FA");
-                entity.Property(u => u.IdPessoa).HasColumnName("Id_Pessoa");
-                entity.Property(u => u.IdPerfil).HasColumnName("Id_Perfil");
+                entity.Property(u => u.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(u => u.Username).HasColumnName("username");
+                entity.Property(u => u.Senha).HasColumnName("senha");
+                entity.Property(u => u.Status).HasColumnName("status");
+                entity.Property(u => u.Chave2FA).HasColumnName("chave_2fa");
+                entity.Property(u => u.IdPessoa).HasColumnName("id_pessoa");
+                entity.Property(u => u.IdPerfil).HasColumnName("id_perfil");
 
                 entity.HasOne(u => u.Pessoa)
                     .WithOne(p => p.Usuario)
@@ -134,15 +135,15 @@ namespace SistemaWhiteLabel.API.Data
             // ====================== VENDA ======================
             modelBuilder.Entity<Venda>(entity =>
             {
-                entity.ToTable("tbl_Venda");
+                entity.ToTable("tb_venda");
                 entity.HasKey(v => v.IdVenda);
-                entity.Property(v => v.IdVenda).HasColumnName("Id_Venda");
-                entity.Property(v => v.DataHora).HasColumnName("Data_Hora_Venda");
-                entity.Property(v => v.TotalVenda).HasColumnName("Total_Venda").HasPrecision(12, 2);
-                entity.Property(v => v.TotalDesconto).HasColumnName("Total_Desconto_Venda").HasPrecision(12, 2);
-                entity.Property(v => v.Status).HasColumnName("Status_Venda_Venda").IsRequired().HasMaxLength(15);
-                entity.Property(v => v.IdPessoa).HasColumnName("Id_Pessoa");
-                entity.Property(v => v.IdUsuario).HasColumnName("Id_Usuario");
+                entity.Property(v => v.IdVenda).HasColumnName("id_venda");
+                entity.Property(v => v.DataHora).HasColumnName("data_hora_venda");
+                entity.Property(v => v.TotalVenda).HasColumnName("total_venda").HasPrecision(12, 2);
+                entity.Property(v => v.TotalDesconto).HasColumnName("total_desconto_venda").HasPrecision(12, 2);
+                entity.Property(v => v.Status).HasColumnName("status_venda_venda").IsRequired().HasMaxLength(15);
+                entity.Property(v => v.IdPessoa).HasColumnName("id_pessoa");
+                entity.Property(v => v.IdUsuario).HasColumnName("id_usuario");
 
                 entity.HasOne(v => v.Pessoa)
                     .WithMany()
@@ -167,27 +168,27 @@ namespace SistemaWhiteLabel.API.Data
             // ====================== ITEM_VENDA ======================
             modelBuilder.Entity<ItemVenda>(entity =>
             {
-                entity.ToTable("tbl_Item_Venda");
+                entity.ToTable("tb_item_venda");
                 entity.HasKey(i => i.IdItemVenda);
-                entity.Property(i => i.IdItemVenda).HasColumnName("Id_Item_Venda");
-                entity.Property(i => i.IdVenda).HasColumnName("Id_Venda");
-                entity.Property(i => i.IdProduto).HasColumnName("Id_Produto");
-                entity.Property(i => i.Qdte).HasColumnName("QDTE_Item_Venda");
-                entity.Property(i => i.PrecoUnitario).HasColumnName("Preco_Unitario_Item_Venda").HasPrecision(12, 2);
-                entity.Property(i => i.ValorDesconto).HasColumnName("Valor_Desconto_Item_Venda").HasPrecision(12, 2);
-                entity.Property(i => i.ValorTotal).HasColumnName("Valor_Total_Item_Venda").HasPrecision(12, 2);
+                entity.Property(i => i.IdItemVenda).HasColumnName("id_item_venda");
+                entity.Property(i => i.IdVenda).HasColumnName("id_venda");
+                entity.Property(i => i.IdProduto).HasColumnName("id_produto");
+                entity.Property(i => i.Qdte).HasColumnName("qdte_item_venda");
+                entity.Property(i => i.PrecoUnitario).HasColumnName("preco_unitario_item_venda").HasPrecision(12, 2);
+                entity.Property(i => i.ValorDesconto).HasColumnName("valor_desconto_item_venda").HasPrecision(12, 2);
+                entity.Property(i => i.ValorTotal).HasColumnName("valor_total_item_venda").HasPrecision(12, 2);
             });
 
             // ====================== FORMA_PAGAMENTO ======================
             modelBuilder.Entity<FormaPagamento>(entity =>
             {
-                entity.ToTable("tbl_Forma_Pagamento");
+                entity.ToTable("tb_forma_pagamento");
                 entity.HasKey(f => f.IdFormaPgto);
-                entity.Property(f => f.IdFormaPgto).HasColumnName("Id_Forma_Pagamento");
-                entity.Property(f => f.DataHoraPgto).HasColumnName("Data_Hora_Pagamento");
-                entity.Property(f => f.TotalPgto).HasColumnName("Total_Forma_Pagamento").HasPrecision(12, 2);
-                entity.Property(f => f.IdVenda).HasColumnName("Id_Venda");
-                entity.Property(f => f.IdTipoPgto).HasColumnName("Id_Tipo_Pagamento");
+                entity.Property(f => f.IdFormaPgto).HasColumnName("id_forma_pagamento");
+                entity.Property(f => f.DataHoraPgto).HasColumnName("data_hora_pagamento");
+                entity.Property(f => f.TotalPgto).HasColumnName("total_forma_pagamento").HasPrecision(12, 2);
+                entity.Property(f => f.IdVenda).HasColumnName("id_venda");
+                entity.Property(f => f.IdTipoPgto).HasColumnName("id_tipo_pagamento");
 
                 entity.HasOne(f => f.TipoPagamento)
                     .WithMany()
@@ -197,32 +198,32 @@ namespace SistemaWhiteLabel.API.Data
             // ====================== TIPO_PAGAMENTO ======================
             modelBuilder.Entity<TipoPagamento>(entity =>
             {
-                entity.ToTable("tbl_Tipo_Pagamento");
+                entity.ToTable("tb_tipo_pagamento");
                 entity.HasKey(t => t.IdTipoPgto);
-                entity.Property(t => t.IdTipoPgto).HasColumnName("Id_Tipo_Pagamento");
-                entity.Property(t => t.Descricao).HasColumnName("Descricao").IsRequired().HasMaxLength(50);
+                entity.Property(t => t.IdTipoPgto).HasColumnName("id_tipo_pagamento");
+                entity.Property(t => t.Descricao).HasColumnName("descricao").IsRequired().HasMaxLength(50);
             });
 
             // ====================== MODULO ======================
             modelBuilder.Entity<Modulo>(entity =>
             {
-                entity.ToTable("tbl_Modulo");
+                entity.ToTable("tb_modulo");
                 entity.HasKey(m => m.Nome);
-                entity.Property(m => m.Nome).HasColumnName("Nome_Modulo").HasMaxLength(50);
-                entity.Property(m => m.Descricao).HasColumnName("Descricao_Modulo").HasMaxLength(200);
-                entity.Property(m => m.Ativo).HasColumnName("Ativo_Modulo").IsRequired().HasMaxLength(1);
+                entity.Property(m => m.Nome).HasColumnName("nome_modulo").HasMaxLength(50);
+                entity.Property(m => m.Descricao).HasColumnName("descricao_modulo").HasMaxLength(200);
+                entity.Property(m => m.Ativo).HasColumnName("ativo_modulo").IsRequired().HasMaxLength(1);
             });
 
             // ====================== FIADO (módulo Fiado) ======================
             modelBuilder.Entity<FiadoVenda>(entity =>
             {
-                entity.ToTable("tbl_Fiado");
+                entity.ToTable("tb_fiado");
                 entity.HasKey(f => f.IdFiado);
-                entity.Property(f => f.IdFiado).HasColumnName("Id_Fiado");
-                entity.Property(f => f.IdVenda).HasColumnName("Id_Venda");
-                entity.Property(f => f.IdPessoa).HasColumnName("Id_Pessoa");
-                entity.Property(f => f.ValorOriginal).HasColumnName("Valor_Original").HasPrecision(12, 2);
-                entity.Property(f => f.DataHora).HasColumnName("Data_Hora_Fiado");
+                entity.Property(f => f.IdFiado).HasColumnName("id_fiado");
+                entity.Property(f => f.IdVenda).HasColumnName("id_venda");
+                entity.Property(f => f.IdPessoa).HasColumnName("id_pessoa");
+                entity.Property(f => f.ValorOriginal).HasColumnName("valor_original").HasPrecision(12, 2);
+                entity.Property(f => f.DataHora).HasColumnName("data_hora_fiado");
 
                 entity.HasOne(f => f.Venda)
                     .WithMany()
@@ -233,6 +234,26 @@ namespace SistemaWhiteLabel.API.Data
                     .WithMany()
                     .HasForeignKey(f => f.IdPessoa)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ====================== DISPOSITIVO (celular autorizado pelo PC) ======================
+            modelBuilder.Entity<Dispositivo>(entity =>
+            {
+                entity.ToTable("tb_dispositivo");
+                entity.HasKey(d => d.IdDispositivo);
+                entity.Property(d => d.IdDispositivo).HasColumnName("id_dispositivo");
+                entity.Property(d => d.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(d => d.Nome).HasColumnName("nome_dispositivo").IsRequired().HasMaxLength(100);
+                entity.Property(d => d.CriadoEm).HasColumnName("criado_em");
+                entity.Property(d => d.ExpiraEm).HasColumnName("expira_em");
+                entity.Property(d => d.LimiteEm).HasColumnName("limite_em");
+                entity.Property(d => d.UltimoUso).HasColumnName("ultimo_uso");
+                entity.Property(d => d.RevogadoEm).HasColumnName("revogado_em");
+
+                entity.HasOne(d => d.Usuario)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdUsuario)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SistemaWhiteLabel.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c95221d4d90c8cfdead4aac574bc3428ccfe7de")]
 [assembly: System.Reflection.AssemblyProductAttribute("SistemaWhiteLabel.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SistemaWhiteLabel.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

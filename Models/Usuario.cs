@@ -3,29 +3,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaWhiteLabel.API.Models
 {
-    [Table("tbl_Usuario")]
+    [Table("tb_usuario")]
     public class Usuario
     {
         [Key]
-        [Column("Id_Usuario")]
+        [Column("id_usuario")]
         public int IdUsuario { get; set; }
 
-        [Column("UserName")]
+        [Column("username")]
         public string Username { get; set; } = string.Empty;
 
-        [Column("Senha")]
+        [Column("senha")]
         public string Senha { get; set; } = string.Empty;
 
-        [Column("Status")]
+        [Column("status")]
         public string Status { get; set; } = "Ativo";
 
-        [Column("Chave_2FA")]
+        [Column("chave_2fa")]
         public string? Chave2FA { get; set; }
 
-        [Column("Id_Pessoa")]
+        [Column("id_pessoa")]
         public int IdPessoa { get; set; }
 
-        [Column("Id_Perfil")]
+        [Column("id_perfil")]
         public int IdPerfil { get; set; }
 
         // Navegação

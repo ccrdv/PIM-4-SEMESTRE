@@ -31,6 +31,12 @@
       <div class="muted">Só o perfil Administrador liga e desliga.</div>
       <div id="modulesList"></div>
 
+      <h2 class="section-title" style="margin-top:24px">Celulares conectados</h2>
+      <div class="muted">Leia o QR Code no app do celular para entrar sem digitar senha. A sessão do celular dura poucos dias:
+        renove aqui ou leia o QR Code de novo.</div>
+      <div id="devicesList"></div>
+      <button class="btn btn-primary" id="pairBtn" style="margin-top:12px">Conectar celular</button>
+
       <div class="setting-row">
         <div>
           <strong>Sair da conta</strong>
@@ -41,6 +47,25 @@
     </section>
   </main>
 
-  <script src="script.js?v=11"></script>
+  <div class="modal-backdrop" id="pairModal">
+    <div class="modal" style="max-width:420px">
+      <div class="modal-head">
+        <h2>Conectar celular</h2>
+        <button class="close-btn" id="closePairModal">×</button>
+      </div>
+      <p class="muted">No app, escolha "Ler QR Code" e aponte para a tela. O código vale por 2 minutos e só funciona uma vez.</p>
+      <div class="qr-box" id="pairQr"></div>
+      <p class="muted" id="pairInfo" style="text-align:center"></p>
+      <div class="note" id="pairWarn" style="display:none">Você abriu o sistema por "localhost": o celular não consegue chegar nesse endereço.
+        Abra pelo IP da rede ou da VPN e gere o QR Code de novo.</div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="closePairModal2">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code (se não carregar, aparece o código em texto) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="script.js?v=12"></script>
 </body>
 </html>

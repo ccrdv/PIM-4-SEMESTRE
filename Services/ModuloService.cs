@@ -24,7 +24,7 @@ namespace SistemaWhiteLabel.API.Services
             _logger = logger;
         }
 
-        // Módulo que não está cadastrado em tbl_Modulo é considerado desligado
+        // Módulo que não está cadastrado em tb_modulo é considerado desligado
         public async Task<bool> EstaAtivoAsync(string nome)
         {
             var chave = $"{CACHE_PREFIX}{nome.ToLower()}";
@@ -45,8 +45,8 @@ namespace SistemaWhiteLabel.API.Services
             }
             catch (Exception ex)
             {
-                // Ex.: tbl_Modulo ainda não foi criada (03_modulo_fiado.sql). O resto do sistema continua funcionando.
-                _logger.LogWarning(ex, "Não foi possível ler tbl_Modulo; módulo '{Modulo}' tratado como desligado.", nome);
+                // Ex.: tb_modulo ainda não foi criada (Banco/03_modulo_fiado.sql). O resto do sistema continua funcionando.
+                _logger.LogWarning(ex, "Não foi possível ler tb_modulo; módulo '{Modulo}' tratado como desligado.", nome);
                 return false;
             }
         }
@@ -64,7 +64,7 @@ namespace SistemaWhiteLabel.API.Services
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Não foi possível ler tbl_Modulo.");
+                _logger.LogWarning(ex, "Não foi possível ler tb_modulo.");
                 return new List<ModuloDto>();
             }
 

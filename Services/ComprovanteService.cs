@@ -41,7 +41,7 @@ namespace SistemaWhiteLabel.API.Services
             var totalPago = pagamentos.Sum(p => p.TotalPgto ?? 0);
             var saldoRestante = totalVenda - totalPago;
 
-            // Venda fiada sem nenhum pagamento ainda
+            // Venda a prazo sem nenhum pagamento ainda
             var isFiado = (await _fiado.VendasFiadasAsync()).Contains(idVenda);
 
             var dados = new ComprovanteVendaDto
@@ -63,7 +63,7 @@ namespace SistemaWhiteLabel.API.Services
                 Total = totalVenda,
                 FormaPagamento = pagamentos.Any()
                     ? string.Join(" / ", pagamentos.Select(p => p.TipoPagamento?.Descricao ?? "---").Distinct()).ToUpper()
-                    : (isFiado ? "FIADO" : "SEM PAGAMENTO"),
+                    : (isFiado ? "A PRAZO" : "SEM PAGAMENTO"),
                 Status = saldoRestante > 0 ? "PARCIALMENTE PAGO" : "PAGO",
                 ValorPago = totalPago,
                 SaldoRestante = saldoRestante

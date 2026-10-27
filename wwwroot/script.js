@@ -58,7 +58,7 @@
     }
   };
 
-  // Perfis (tbl_Perfil). Vendedor só cadastra clientes; o resto é do Administrador e do Gerente.
+  // Perfis (tb_perfil). Vendedor só cadastra clientes; o resto é do Administrador e do Gerente.
   const MANAGERS = ['Administrador', 'Gerente'];
   const isManager = () => MANAGERS.includes(Session.role);
 
@@ -126,6 +126,12 @@
     return `${y}-${m}-${d}`;
   }
 
+  // 22/10/2026 18:30
+  function displayDateTime(value) {
+    if (!value) return '—';
+    return `${displayDate(value)} ${String(value).slice(11, 16)}`;
+  }
+
   function displayDate(value) {
     if (!value) return '—';
     const [y, m, d] = String(value).slice(0, 10).split('-');
@@ -154,7 +160,7 @@
   }
 
   /* --------------------------- módulos / menu --------------------------- */
-  // Módulos ligados no banco (tbl_Modulo): { fiado: true, ... }
+  // Módulos ligados no banco (tb_modulo): { fiado: true, ... }
   let modules = {};
   const moduleOn = (name) => !!modules[name];
 
@@ -173,7 +179,7 @@
     { href: 'index.html', label: 'Dashboard' },
     { href: 'vendas.html', label: 'Nova venda' },
     { href: 'historico.html', label: 'Histórico de vendas' },
-    { href: 'fiados.html', label: 'Fiados', module: 'fiado' },
+    { href: 'aprazo.html', label: 'A prazo', module: 'fiado' },
     { href: 'produtos.html', label: 'Produtos', roles: MANAGERS },
     { href: 'estoque.html', label: 'Estoque', roles: MANAGERS },
     { href: 'clientes.html', label: 'Clientes' },
@@ -333,9 +339,9 @@
   const loadCategories = async () => (await api('/Categoria')).map((c) => ({ id: c.idCategoria, name: c.descricao }));
   const loadSales = async () => (await api('/Venda')).map(toSale);
 
-  // Formas de pagamento da tela (têm que existir em tbl_Tipo_Pagamento). Fiado só com o módulo ligado.
+  // Formas de pagamento da tela (têm que existir em tb_tipo_pagamento). "A prazo" só com o módulo ligado (o módulo se chama 'fiado' no banco).
   const PAYMENTS = ['Pix', 'Dinheiro', 'Cartão'];
-  const paymentOptions = () => (moduleOn('fiado') ? [...PAYMENTS, 'Fiado'] : PAYMENTS);
+  const paymentOptions = () => (moduleOn('fiado') ? [...PAYMENTS, 'A prazo'] : PAYMENTS);
 
   const stockStatus = (p) => {
     if (p.stock <= 0) return { cls: 'bad', label: 'Sem estoque' };
@@ -423,11 +429,11 @@
       $('#metricStock').textContent = d.produtosSemEstoque.toLocaleString('pt-BR');
       $('#metricLow').textContent = d.produtosBaixoEstoque.toLocaleString('pt-BR');
 
-      // Cards do fiado só aparecem com o módulo ligado
+      // Cards do módulo A prazo só aparecem com o módulo ligado
       $$('[data-module-card="fiado"]').forEach((el) => (el.style.display = d.fiadoAtivo ? '' : 'none'));
       if (d.fiadoAtivo) {
         $('#metricFiado').textContent = fmt(d.totalFiado);
-        $('#metricFiadoFoot').textContent = `Vendido no fiado no período: ${fmt(d.vendasFiadasPeriodo)}`;
+        $('#metricFiadoFoot').textContent = `Vendido a prazo no período: ${fmt(d.vendasFiadasPeriodo)}`;
       }
 
       drawLineChart($('#salesChart'), d.vendasPorDia);
@@ -710,7 +716,7 @@
           <div class="person-stats">
             <span>Compras: <strong>${c.purchases}</strong></span>
             <span>Total: <strong>${fmt(c.totalBought)}</strong></span>
-            ${moduleOn('fiado') ? `<span>Fiado: <strong>${fmt(c.fiado)}</strong></span>` : ''}
+            ${moduleOn('fiado') ? `<span>A prazo: <strong>${fmt(c.fiado)}</strong></span>` : ''}
           </div>
           ${isManager() ? `
             <div style="margin-top:12px;display:flex;gap:8px">
@@ -928,7 +934,7 @@
       if (!cart.length) throw new Error('Adicione pelo menos um produto.');
 
       const customerId = $('#saleCustomer').value;
-      if (payment === 'Fiado' && !customerId) throw new Error('Escolha o cliente para vender no fiado.');
+      if (payment === 'A prazo' && !customerId) throw new Error('Escolha o cliente para vender a prazo.');
 
       const t = totals();
 
@@ -1055,7 +1061,7 @@
     draw();
   }
 
-  // Fiados (módulo): quem deve, vendas pendentes, recebimento com recibo em PDF e histórico por cliente
+  // A prazo (módulo): quem deve, vendas pendentes, recebimento com recibo em PDF e histórico por cliente
   async function initFiados() {
     if (!$('#fiadoPage')) return;
 
@@ -1097,7 +1103,7 @@
             <select class="select" id="payForm_${s.idVenda}" style="width:110px">${PAYMENTS.map((p) => `<option>${p}</option>`).join('')}</select>
             <button class="btn btn-primary" data-pay="${s.idVenda}" data-pending="${s.valorPendente}">Receber</button>
           </div>
-        </div>`).join('') : '<div class="empty">Nenhuma venda fiada pendente.</div>';
+        </div>`).join('') : '<div class="empty">Nenhuma venda a prazo pendente.</div>';
     }
 
     $('#pendingList').addEventListener('click', (e) => {
@@ -1155,7 +1161,7 @@
   }
 
   const MODULE_LABELS = {
-    fiado: ['Fiado', 'Vendas a prazo e recebimento dos pagamentos.']
+    fiado: ['A prazo', 'Vendas a prazo e recebimento dos pagamentos.']
   };
 
   async function initSettings() {
@@ -1170,6 +1176,8 @@
 
     $('#userInfo').textContent = `${Session.username} · perfil ${Session.role}`;
     $('#logoutBtn').addEventListener('click', logout);
+
+    await initDevices();
 
     // Módulos: todos veem, só o Administrador liga e desliga
     const list = await api('/Modulos');
@@ -1202,6 +1210,88 @@
         setTimeout(() => location.reload(), 600);   // refaz o menu com o módulo ligado/desligado
       });
     });
+  }
+
+  // Celulares conectados: o PC mostra o QR Code, o celular lê e ganha uma sessão de poucos dias
+  async function initDevices() {
+    const pairModal = bindModal('#pairModal', null, ['#closePairModal', '#closePairModal2']);
+    let pairTimer = null;
+    const stopPair = () => clearInterval(pairTimer);
+    ['#closePairModal', '#closePairModal2'].forEach((id) => $(id).addEventListener('click', stopPair));
+
+    async function drawDevices() {
+      const list = await api('/Dispositivo');
+
+      $('#devicesList').innerHTML = list.length ? list.map((d) => `
+        <div class="setting-row">
+          <div>
+            <strong>${esc(d.nome)}</strong>
+            <div class="muted">${d.ativo ? 'Sessão até ' + displayDateTime(d.expiraEm) : 'Sessão vencida: leia o QR Code de novo'}
+              · último uso ${displayDateTime(d.ultimoUso)}</div>
+          </div>
+          <div class="order-actions">
+            <button class="btn btn-secondary" data-renew-device="${d.idDispositivo}">Renovar</button>
+            <button class="btn btn-danger" data-remove-device="${d.idDispositivo}">Desconectar</button>
+          </div>
+        </div>`).join('') : '<div class="empty">Nenhum celular conectado.</div>';
+
+      return list;
+    }
+
+    $('#devicesList').addEventListener('click', (e) => {
+      const renew = e.target.closest('[data-renew-device]');
+      const remove = e.target.closest('[data-remove-device]');
+
+      if (renew) run(async () => {
+        await api(`/Dispositivo/${renew.dataset.renewDevice}/renovar`, { method: 'POST' });
+        toast('Sessão do celular renovada.');
+        await drawDevices();
+      });
+
+      if (remove) run(async () => {
+        if (!confirm('Desconectar este celular? Ele precisará ler o QR Code de novo.')) return;
+        await api(`/Dispositivo/${remove.dataset.removeDevice}`, { method: 'DELETE' });
+        toast('Celular desconectado.');
+        await drawDevices();
+      });
+    });
+
+    $('#pairBtn').addEventListener('click', () => run(async () => {
+      const before = (await api('/Dispositivo')).map((d) => d.idDispositivo);
+      const pairing = await api('/Dispositivo/pareamento', { method: 'POST' });
+
+      // O QR Code leva o endereço da API (o celular precisa alcançá-lo) e o código de uso único
+      const content = JSON.stringify({ api: API, codigo: pairing.codigo });
+      $('#pairQr').innerHTML = '';
+      if (typeof QRCode !== 'undefined') new QRCode($('#pairQr'), { text: content, width: 220, height: 220 });
+      else $('#pairQr').textContent = content;
+
+      $('#pairWarn').style.display = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'block' : 'none';
+      pairModal.classList.add('open');
+
+      // Espera o celular ler: a cada 3 s vê se apareceu um aparelho novo na lista
+      stopPair();
+      const expiresAt = new Date(pairing.expiraEm);
+      pairTimer = setInterval(() => run(async () => {
+        const left = Math.ceil((expiresAt - new Date()) / 1000);
+        if (left <= 0) {
+          stopPair();
+          $('#pairInfo').textContent = 'QR Code expirado. Feche e gere outro.';
+          return;
+        }
+
+        $('#pairInfo').textContent = `Vale por mais ${left} s`;
+        const now = await api('/Dispositivo');
+        if (now.some((d) => !before.includes(d.idDispositivo))) {
+          stopPair();
+          pairModal.classList.remove('open');
+          toast('Celular conectado.');
+          await drawDevices();
+        }
+      }), 3000);
+    }));
+
+    await drawDevices();
   }
 
   /* ------------------------------- login ------------------------------- */

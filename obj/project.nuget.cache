@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Yqr6n56SKmI=",
+  "dgSpecHash": "cUDFiaeWjL8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\gabri\\Desktop\\PIM4\\SistemaWhiteLabel.API.csproj",
+  "projectFilePath": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\SistemaWhiteLabel.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gabri\\.nuget\\packages\\googleauthenticator\\3.0.0\\googleauthenticator.3.0.0.nupkg.sha512",
     "C:\\Users\\gabri\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

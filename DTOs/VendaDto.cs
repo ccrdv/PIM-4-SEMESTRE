@@ -17,7 +17,8 @@ namespace SistemaWhiteLabel.API.DTOs
         [JsonPropertyName("desconto")]
         public decimal? Desconto { get; set; }
 
-        public bool IsFiado => FormaPagamento?.ToUpper() == "FIADO";
+        // Venda a prazo (o módulo se chamava "Fiado": o nome antigo continua aceito)
+        public bool IsFiado => FormaPagamento?.Trim().ToUpper() is "A PRAZO" or "FIADO";
     }
 
     public class ItemVendaDto
@@ -41,7 +42,7 @@ namespace SistemaWhiteLabel.API.DTOs
         public decimal TotalBruto { get; set; }          // antes do desconto
         public int? IdCliente { get; set; }
         public string? NomeCliente { get; set; }  
-        public string FormaPagamento { get; set; } = string.Empty;   // Dinheiro, Pix, Cartão ou Fiado
+        public string FormaPagamento { get; set; } = string.Empty;   // Dinheiro, Pix, Cartão ou A prazo
         public bool IsFiado { get; set; }
         public List<ItemVendaResponseDto> Itens { get; set; } = new();
     }

@@ -5,14 +5,14 @@
 GET {{host}}/api/Modulos
 Authorization: Bearer {{accessToken}}
 
-### Desligar o módulo de fiado (só o perfil Administrador)
+### Desligar o módulo A prazo (nome interno: fiado) (só o perfil Administrador)
 PUT {{host}}/api/Modulos/fiado
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 { "ativo": false }
 
-### Ligar o módulo de fiado
+### Ligar o módulo A prazo (nome interno: fiado)
 PUT {{host}}/api/Modulos/fiado
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json

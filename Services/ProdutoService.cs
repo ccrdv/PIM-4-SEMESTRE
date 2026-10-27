@@ -164,7 +164,7 @@ namespace SistemaWhiteLabel.API.Services
                 .FirstOrDefaultAsync(c => c.Descricao.ToUpper() == "GERAL");
 
             if (geral == null)
-                throw new Exception("Categoria 'Geral' não cadastrada. Rode o script 04_ajustes_novo_front.sql.");
+                throw new Exception("Categoria 'Geral' não cadastrada. Cadastre a categoria 'Geral' em tb_categoria (veja Banco/04_ajustes_novo_front.sql).");
 
             return geral.IdCategoria;
         }

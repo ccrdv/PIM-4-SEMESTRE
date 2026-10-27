@@ -15,7 +15,7 @@ namespace SistemaWhiteLabel.API.Modules.Fiado
 
         // ====================== SALDOS ======================
 
-        // Saldo de cada fiado = Valor_Original - pagamentos da venda (tbl_Forma_Pagamento)
+        // Saldo de cada fiado = valor_original - pagamentos da venda (tb_forma_pagamento)
         public async Task<List<FiadoSaldo>> CalcularSaldosAsync()
         {
             var fiados = await _context.Fiados
@@ -101,7 +101,7 @@ namespace SistemaWhiteLabel.API.Modules.Fiado
                 .FirstOrDefaultAsync(f => f.IdVenda == dto.IdVenda);
 
             if (fiado == null)
-                throw new KeyNotFoundException("Esta venda não é fiada.");
+                throw new KeyNotFoundException("Esta venda não é a prazo.");
 
             var jaPago = await _context.FormaPagamentos
                 .Where(fp => fp.IdVenda == fiado.IdVenda)
@@ -110,17 +110,17 @@ namespace SistemaWhiteLabel.API.Modules.Fiado
             var saldo = fiado.ValorOriginal - jaPago;
 
             if (saldo <= 0)
-                throw new Exception("Este fiado já está quitado.");
+                throw new Exception("Esta venda a prazo já está quitada.");
 
             if (dto.ValorPago > saldo)
                 throw new Exception($"Valor pago (R$ {dto.ValorPago:F2}) excede o débito (R$ {saldo:F2})");
 
-            // Como o cliente pagou (tbl_Tipo_Pagamento). Não faz sentido "pagar fiado com fiado".
+            // Como o cliente pagou (tb_tipo_pagamento). Não faz sentido "pagar a prazo com a prazo".
             var formaPagamento = string.IsNullOrWhiteSpace(dto.FormaPagamento)
                 ? "DINHEIRO"
                 : dto.FormaPagamento.Trim().ToUpper();
 
-            if (formaPagamento == "FIADO")
+            if (formaPagamento == "FIADO" || formaPagamento == "A PRAZO")
                 throw new Exception("Informe como o cliente pagou (Dinheiro, Pix, Cartão...).");
 
             var tipoPagamento = await _context.TiposPagamento
@@ -149,7 +149,7 @@ namespace SistemaWhiteLabel.API.Modules.Fiado
                 ValorPago = dto.ValorPago,
                 ValorRestante = valorRestante,
                 Mensagem = valorRestante <= 0
-                    ? "Fiado quitado com sucesso!"
+                    ? "Venda a prazo quitada com sucesso!"
                     : $"Pagamento registrado. Restam R$ {valorRestante:F2}"
             };
         }

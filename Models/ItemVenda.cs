@@ -7,27 +7,27 @@ namespace SistemaWhiteLabel.API.Models
     public class ItemVenda
     {
         [Key]
-        [Column("Id_Item_Venda")]
+        [Column("id_item_venda")]
         public int IdItemVenda { get; set; }
 
-        [Column("Id_Venda")]
+        [Column("id_venda")]
         public int IdVenda { get; set; }
 
-        [Column("Id_Produto")]
+        [Column("id_produto")]
         public int IdProduto { get; set; }
 
-        [Column("QDTE_Item_Venda")]
+        [Column("qdte_item_venda")]
         public int Qdte { get; set; }
 
-        [Column("Preco_Unitario_Item_Venda")]
+        [Column("preco_unitario_item_venda")]
         [Precision(12, 2)]
         public decimal PrecoUnitario { get; set; }
 
-        [Column("Valor_Desconto_Item_Venda")]
+        [Column("valor_desconto_item_venda")]
         [Precision(12, 2)]
         public decimal ValorDesconto { get; set; } = 0;
 
-        [Column("Valor_Total_Item_Venda")]
+        [Column("valor_total_item_venda")]
         [Precision(12, 2)]
         public decimal ValorTotal { get; set; }
 

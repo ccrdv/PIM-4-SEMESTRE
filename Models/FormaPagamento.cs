@@ -4,24 +4,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaWhiteLabel.API.Models
 {
-    [Table("tbl_Forma_Pagamento")]
+    [Table("tb_forma_pagamento")]
     public class FormaPagamento
     {
         [Key]
-        [Column("Id_Forma_Pagamento")]
+        [Column("id_forma_pagamento")]
         public int IdFormaPgto { get; set; }
 
-        [Column("Data_Hora_Pagamento")]
+        [Column("data_hora_pagamento")]
         public DateTime DataHoraPgto { get; set; } = DateTime.Now;
 
-        [Column("Total_Forma_Pagamento")]
+        [Column("total_forma_pagamento")]
         [Precision(12, 2)]
         public decimal? TotalPgto { get; set; }
 
-        [Column("Id_Venda")]
+        [Column("id_venda")]
         public int IdVenda { get; set; }
 
-        [Column("Id_Tipo_Pagamento")]
+        [Column("id_tipo_pagamento")]
         public int IdTipoPgto { get; set; }
 
         // Navegação

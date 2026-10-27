@@ -37,10 +37,10 @@ namespace SistemaWhiteLabel.API.Services
             if (dto.IsFiado)
             {
                 if (!await _fiado.EstaAtivoAsync())
-                    throw new Exception("Venda fiada indisponível: o módulo de fiado está desativado.");
+                    throw new Exception("Venda a prazo indisponível: o módulo A prazo está desativado.");
 
                 if (!dto.ClienteId.HasValue)
-                    throw new Exception("Selecione o cliente para a venda fiada.");
+                    throw new Exception("Selecione o cliente para a venda a prazo.");
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -54,7 +54,7 @@ namespace SistemaWhiteLabel.API.Services
                 if (usuario == null)
                     throw new Exception("Usuário não encontrado.");
 
-                // Forma de pagamento escolhida (tbl_Tipo_Pagamento)
+                // Forma de pagamento escolhida (tb_tipo_pagamento)
                 // Na venda fiada ninguém pagou ainda: não existe forma de pagamento nem pagamento
                 TipoPagamento? tipoPagamento = null;
 

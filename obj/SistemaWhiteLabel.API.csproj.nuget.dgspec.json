@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gabri\\Desktop\\PIM4\\SistemaWhiteLabel.API.csproj": {}
+    "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\SistemaWhiteLabel.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gabri\\Desktop\\PIM4\\SistemaWhiteLabel.API.csproj": {
+    "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\SistemaWhiteLabel.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gabri\\Desktop\\PIM4\\SistemaWhiteLabel.API.csproj",
+        "projectUniqueName": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\SistemaWhiteLabel.API.csproj",
         "projectName": "SistemaWhiteLabel.API",
-        "projectPath": "C:\\Users\\gabri\\Desktop\\PIM4\\SistemaWhiteLabel.API.csproj",
+        "projectPath": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\SistemaWhiteLabel.API.csproj",
         "packagesPath": "C:\\Users\\gabri\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gabri\\Desktop\\PIM4\\obj\\",
+        "outputPath": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

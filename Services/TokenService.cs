@@ -61,7 +61,31 @@ namespace SistemaWhiteLabel.API.Services
             return CriarToken(claims, DOIS_FATORES_EXPIRATION_MINUTES);
         }
 
+        // Token do celular (autorizado pelo PC por QR Code). Vale até "venceEm" (limite absoluto);
+        // a validade real da sessão fica em tb_dispositivo e é conferida a cada requisição (Program.cs).
+        public string GenerateDeviceToken(string username, string role, int idDispositivo, DateTime venceEm)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role),
+                new Claim("tipo", "Mobile"),
+                new Claim("etapa", "sessao"),
+                new Claim("did", idDispositivo.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
+            };
+
+            return CriarToken(claims, venceEm.ToUniversalTime());
+        }
+
         private string CriarToken(List<Claim> claims, int expirationMinutes)
+        {
+            return CriarToken(claims, DateTime.UtcNow.AddMinutes(expirationMinutes));
+        }
+
+        private string CriarToken(List<Claim> claims, DateTime venceEmUtc)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
@@ -69,7 +93,7 @@ namespace SistemaWhiteLabel.API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes),
+                Expires = venceEmUtc,
                 Issuer = _jwtSettings.Issuer,
                 Audience = _jwtSettings.Audience,
                 SigningCredentials = new SigningCredentials(

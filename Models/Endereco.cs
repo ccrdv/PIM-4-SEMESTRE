@@ -6,28 +6,28 @@ namespace SistemaWhiteLabel.API.Models
     public class Endereco
     {
         [Key]
-        [Column("Id_Endereco")]
+        [Column("id_endereco")]
         public int IdEndereco { get; set; }
 
-        [Column("Logradouro")]
+        [Column("logradouro")]
         [MaxLength(150)]
         public string Logradouro { get; set; } = string.Empty;
 
-        [Column("Numero")]
+        [Column("numero")]
         public int? Numero { get; set; }
 
-        [Column("Bairro")]
+        [Column("bairro")]
         [MaxLength(100)]
         public string? Bairro { get; set; }
 
-        [Column("CEP")]
+        [Column("cep")]
         [MaxLength(9)]
         public string? Cep { get; set; }
 
-        [Column("Id_Pessoa")]
+        [Column("id_pessoa")]
         public int IdPessoa { get; set; }
 
-        [Column("Id_Municipio")]
+        [Column("id_municipio")]
         public int? IdMunicipio { get; set; }
 
         // Navegação

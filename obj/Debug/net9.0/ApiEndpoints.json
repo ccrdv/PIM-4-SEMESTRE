@@ -440,6 +440,134 @@
     ]
   },
   {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "GetAll",
+    "RelativePath": "api/Dispositivo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SistemaWhiteLabel.API.DTOs.DispositivoResponseDto, SistemaWhiteLabel.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "Desconectar",
+    "RelativePath": "api/Dispositivo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "Renovar",
+    "RelativePath": "api/Dispositivo/{id}/renovar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SistemaWhiteLabel.API.DTOs.DispositivoResponseDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "MinhaSessao",
+    "RelativePath": "api/Dispositivo/minha-sessao",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "SistemaWhiteLabel.API.DTOs.MinhaSessaoDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "IniciarPareamento",
+    "RelativePath": "api/Dispositivo/pareamento",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "SistemaWhiteLabel.API.DTOs.PareamentoDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SistemaWhiteLabel.API.Controllers.DispositivoController",
+    "Method": "Parear",
+    "RelativePath": "api/Dispositivo/parear",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SistemaWhiteLabel.API.DTOs.ParearDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SistemaWhiteLabel.API.DTOs.ParearResultadoDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "SistemaWhiteLabel.API.Controllers.EstoqueController",
     "Method": "GetBaixoEstoque",
     "RelativePath": "api/Estoque/baixo-estoque",

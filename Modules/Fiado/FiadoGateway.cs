@@ -27,10 +27,10 @@ namespace SistemaWhiteLabel.API.Modules.Fiado
         public async Task RegistrarVendaFiadaAsync(Venda venda)
         {
             if (!await EstaAtivoAsync())
-                throw new Exception("Venda fiada indisponível: o módulo de fiado está desativado.");
+                throw new Exception("Venda a prazo indisponível: o módulo A prazo está desativado.");
 
             if (venda.IdPessoa == null)
-                throw new Exception("Venda fiada exige um cliente.");
+                throw new Exception("Venda a prazo exige um cliente.");
 
             _context.Fiados.Add(new FiadoVenda
             {

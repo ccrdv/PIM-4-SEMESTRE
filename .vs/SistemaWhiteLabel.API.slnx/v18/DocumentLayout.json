@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{20F91ACB-789E-E1D9-889A-6EE6169F35B0}|SistemaWhiteLabel.API.csproj|c:\\users\\gabri\\documents\\github\\pim-4-semestre\\dtos\\dispositivodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{20F91ACB-789E-E1D9-889A-6EE6169F35B0}|SistemaWhiteLabel.API.csproj|solutionrelative:dtos\\dispositivodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{20F91ACB-789E-E1D9-889A-6EE6169F35B0}|SistemaWhiteLabel.API.csproj|c:\\users\\gabri\\documents\\github\\pim-4-semestre\\dtos\\modulodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{20F91ACB-789E-E1D9-889A-6EE6169F35B0}|SistemaWhiteLabel.API.csproj|solutionrelative:dtos\\modulodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DispositivoDto.cs",
+              "DocumentMoniker": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\DTOs\\DispositivoDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\DispositivoDto.cs",
+              "ToolTip": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\DTOs\\DispositivoDto.cs",
+              "RelativeToolTip": "DTOs\\DispositivoDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-27T22:23:49.211Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ModuloDto.cs",
+              "DocumentMoniker": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\DTOs\\ModuloDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\ModuloDto.cs",
+              "ToolTip": "C:\\Users\\gabri\\Documents\\GitHub\\PIM-4-SEMESTRE\\DTOs\\ModuloDto.cs",
+              "RelativeToolTip": "DTOs\\ModuloDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-27T22:23:41.28Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
