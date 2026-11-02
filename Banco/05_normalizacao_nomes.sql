@@ -40,7 +40,7 @@ DECLARE
   FUNCTION existe_tabela(p IN VARCHAR2) RETURN BOOLEAN IS
     n NUMBER;
   BEGIN
-    SELECT COUNT(*) INTO n FROM user_tables WHERE table_name = p;
+    SELECT COUNT(*) INTO n FROM user_tables WHERE table_name = p AND table_name NOT LIKE 'BIN$%';
     RETURN n > 0;
   END;
 BEGIN
@@ -69,7 +69,8 @@ BEGIN
   --    Forma_Pagamento, Tipo_Pagamento, Modulo, Fiado, Dispositivo, Compra, Item_Compra,
   --    Distribuidora, Status_Compra, Unidade_Medida, Municipio, Unidade_Federacao
   -- -------------------------------------------------------------------
-  FOR t IN (SELECT table_name FROM user_tables WHERE table_name <> novo(table_name)) LOOP
+  FOR t IN (SELECT table_name FROM user_tables
+             WHERE table_name NOT LIKE 'BIN$%' AND table_name <> LOWER(table_name)) LOOP
     ddl('ALTER TABLE "PIM"."' || t.table_name || '" RENAME TO "' || novo(t.table_name) || '"');
   END LOOP;
 
@@ -77,8 +78,7 @@ BEGIN
   -- 3. COLUNAS em minusculas
   -- -------------------------------------------------------------------
   FOR c IN (SELECT table_name, column_name FROM user_tab_columns
-             WHERE table_name IN (SELECT table_name FROM user_tables)
-               AND hidden_column = 'NO'
+             WHERE table_name IN (SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'BIN$%')
                AND column_name <> LOWER(column_name)
              ORDER BY table_name, column_id) LOOP
     ddl('ALTER TABLE "PIM"."' || c.table_name || '" RENAME COLUMN "' || c.column_name || '" TO "' || LOWER(c.column_name) || '"');
@@ -90,7 +90,8 @@ BEGIN
   -- -------------------------------------------------------------------
   FOR k IN (SELECT table_name, constraint_name FROM user_constraints
              WHERE constraint_name NOT LIKE 'SYS\_%' ESCAPE '\'
-               AND constraint_name <> novo(constraint_name)
+               AND constraint_name NOT LIKE 'BIN$%' AND table_name NOT LIKE 'BIN$%'
+               AND constraint_name <> LOWER(constraint_name)
              ORDER BY table_name, constraint_name) LOOP
     ddl('ALTER TABLE "PIM"."' || k.table_name || '" RENAME CONSTRAINT "' || k.constraint_name || '" TO "' || novo(k.constraint_name) || '"');
   END LOOP;
@@ -98,7 +99,8 @@ BEGIN
   -- indices (alguns ja foram renomeados junto com a chave; o laco so pega o que sobrou)
   FOR i IN (SELECT index_name FROM user_indexes
              WHERE index_name NOT LIKE 'SYS\_%' ESCAPE '\'
-               AND index_name <> novo(index_name)
+               AND index_name NOT LIKE 'BIN$%' AND table_name NOT LIKE 'BIN$%'
+               AND index_name <> LOWER(index_name)
              ORDER BY index_name) LOOP
     ddl('ALTER INDEX "PIM"."' || i.index_name || '" RENAME TO "' || novo(i.index_name) || '"');
   END LOOP;
@@ -205,34 +207,35 @@ WHERE v."status_venda_venda" = 'Concluido';
 -- ---------------------------------------------------------------------
 -- tabelas fora do padrao (nao minusculas ou sem o prefixo tb_)
 SELECT table_name AS tabela_fora_do_padrao FROM user_tables
- WHERE table_name <> LOWER(table_name) OR table_name NOT LIKE 'tb\_%' ESCAPE '\';
+ WHERE table_name NOT LIKE 'BIN$%'
+   AND (table_name <> LOWER(table_name) OR table_name NOT LIKE 'tb\_%' ESCAPE '\');
 
 -- tabelas com nome no plural
 SELECT table_name AS tabela_no_plural FROM user_tables
- WHERE REGEXP_LIKE(table_name, '(s|es)$');
+ WHERE table_name NOT LIKE 'BIN$%' AND REGEXP_LIKE(table_name, '(s|es)$');
 
 -- colunas com letra maiuscula
 SELECT table_name, column_name AS coluna_fora_do_padrao FROM user_tab_columns
- WHERE table_name IN (SELECT table_name FROM user_tables UNION SELECT view_name FROM user_views)
+ WHERE table_name IN (SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'BIN$%' UNION SELECT view_name FROM user_views)
    AND column_name <> LOWER(column_name);
 
 -- chaves e indices com letra maiuscula (os SYS_C... do Oracle nao contam)
 SELECT constraint_name AS chave_fora_do_padrao FROM user_constraints
- WHERE constraint_name <> LOWER(constraint_name) AND constraint_name NOT LIKE 'SYS\_%' ESCAPE '\'
+ WHERE constraint_name <> LOWER(constraint_name) AND constraint_name NOT LIKE 'SYS\_%' ESCAPE '\' AND constraint_name NOT LIKE 'BIN$%'
 UNION ALL
 SELECT index_name FROM user_indexes
- WHERE index_name <> LOWER(index_name) AND index_name NOT LIKE 'SYS\_%' ESCAPE '\';
+ WHERE index_name <> LOWER(index_name) AND index_name NOT LIKE 'SYS\_%' ESCAPE '\' AND index_name NOT LIKE 'BIN$%';
 
 -- objetos invalidos (views devem estar VALID)
-SELECT object_name, object_type, status AS objeto_invalido FROM user_objects WHERE status <> 'VALID';
+SELECT object_name, object_type, status AS objeto_invalido FROM user_objects WHERE status <> 'VALID' AND object_name NOT LIKE 'BIN$%';
 
 -- tipos que ainda merecem olhar: BINARY_FLOAT/NCHAR ou texto maior que 500
 SELECT table_name, column_name, data_type, char_length AS tipo_suspeito FROM user_tab_columns
- WHERE table_name IN (SELECT table_name FROM user_tables)
+ WHERE table_name IN (SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'BIN$%')
    AND (data_type IN ('BINARY_FLOAT', 'BINARY_DOUBLE', 'FLOAT', 'NCHAR', 'CHAR') OR char_length > 500);
 
 -- lista final das tabelas e colunas
 SELECT table_name, column_id, column_name, data_type, data_length, data_precision, data_scale, nullable
   FROM user_tab_columns
- WHERE table_name IN (SELECT table_name FROM user_tables)
+ WHERE table_name IN (SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'BIN$%')
  ORDER BY table_name, column_id;

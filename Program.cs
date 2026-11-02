@@ -150,7 +150,10 @@ var app = builder.Build();
 
 // ====================== MIDDLEWARE ======================
 
-app.UseHttpsRedirection();
+// Em desenvolvimento o celular acessa por http://IP:5012; se a API redirecionasse para https,
+// o app falharia no certificado de teste. Fora do desenvolvimento o redirecionamento continua ligado.
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 
 // As páginas (html, js, css) precisam vir ANTES da autenticação, porque o navegador
 // não envia o Bearer token ao abrir uma página. Quem protege as páginas é o protegerRota() do script.js
