@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SistemaWhiteLabel.API.Models;
 using SistemaWhiteLabel.API.Modules.Fiado;
+using SistemaWhiteLabel.API.Modules.Fornecedor;
 
 namespace SistemaWhiteLabel.API.Data
 {
@@ -24,6 +25,10 @@ namespace SistemaWhiteLabel.API.Data
         public DbSet<Modulo> Modulos { get; set; }
         public DbSet<FiadoVenda> Fiados { get; set; }
         public DbSet<Dispositivo> Dispositivos { get; set; }
+        public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<StatusCompra> StatusCompras { get; set; }
+        public DbSet<Compra> Compras { get; set; }
+        public DbSet<ItemCompra> ItensCompra { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -254,6 +259,79 @@ namespace SistemaWhiteLabel.API.Data
                     .WithMany()
                     .HasForeignKey(d => d.IdUsuario)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ====================== FORNECEDOR (módulo Fornecedor) ======================
+            // O fornecedor fica na tabela tb_distribuidora, que já existia no banco
+            modelBuilder.Entity<Fornecedor>(entity =>
+            {
+                entity.ToTable("tb_distribuidora");
+                entity.HasKey(f => f.IdFornecedor);
+                entity.Property(f => f.IdFornecedor).HasColumnName("id_distribuidora");
+                entity.Property(f => f.Nome).HasColumnName("nome_distribuidora").IsRequired().HasMaxLength(100);
+                entity.Property(f => f.Cnpj).HasColumnName("cnpj").IsRequired().HasMaxLength(14);
+                entity.Property(f => f.Ramo).HasColumnName("ramo").HasMaxLength(30);
+                entity.Property(f => f.Status).HasColumnName("status").IsRequired().HasMaxLength(15);
+                entity.Property(f => f.Telefone).HasColumnName("telefone_distribuidora").HasMaxLength(15);
+                entity.Property(f => f.Email).HasColumnName("email_distribuidora").HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<StatusCompra>(entity =>
+            {
+                entity.ToTable("tb_status_compra");
+                entity.HasKey(s => s.IdStatusCompra);
+                entity.Property(s => s.IdStatusCompra).HasColumnName("id_status_compra");
+                entity.Property(s => s.Descricao).HasColumnName("descricao").IsRequired().HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Compra>(entity =>
+            {
+                entity.ToTable("tb_compra");
+                entity.HasKey(c => c.IdCompra);
+                entity.Property(c => c.IdCompra).HasColumnName("id_compra");
+                entity.Property(c => c.DataHora).HasColumnName("data_hora_compra");
+                entity.Property(c => c.TotalCompra).HasColumnName("total_compra").HasPrecision(12, 2);
+                entity.Property(c => c.TotalDesconto).HasColumnName("total_desconto_compra").HasPrecision(12, 2);
+                entity.Property(c => c.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(c => c.IdFornecedor).HasColumnName("id_distribuidora");
+                entity.Property(c => c.IdStatusCompra).HasColumnName("id_status_compra");
+
+                entity.HasOne(c => c.Usuario)
+                    .WithMany()
+                    .HasForeignKey(c => c.IdUsuario)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(c => c.Fornecedor)
+                    .WithMany()
+                    .HasForeignKey(c => c.IdFornecedor)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(c => c.StatusCompra)
+                    .WithMany()
+                    .HasForeignKey(c => c.IdStatusCompra)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(c => c.Itens)
+                    .WithOne(i => i.Compra)
+                    .HasForeignKey(i => i.IdCompra);
+            });
+
+            modelBuilder.Entity<ItemCompra>(entity =>
+            {
+                entity.ToTable("tb_item_compra");
+                entity.HasKey(i => i.IdItemCompra);
+                entity.Property(i => i.IdItemCompra).HasColumnName("id_item_compra");
+                entity.Property(i => i.IdCompra).HasColumnName("id_compra");
+                entity.Property(i => i.IdProduto).HasColumnName("id_produto");
+                entity.Property(i => i.Qdte).HasColumnName("qdte_item_compra");
+                entity.Property(i => i.PrecoUnitario).HasColumnName("preco_unitario_item_compra").HasPrecision(12, 2);
+                entity.Property(i => i.ValorDesconto).HasColumnName("valor_desconto_item_compra").HasPrecision(12, 2);
+                entity.Property(i => i.ValorTotal).HasColumnName("valor_total_item_compra").HasPrecision(12, 2);
+
+                entity.HasOne(i => i.Produto)
+                    .WithMany()
+                    .HasForeignKey(i => i.IdProduto)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

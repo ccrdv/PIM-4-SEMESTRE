@@ -183,6 +183,8 @@
     { href: 'produtos.html', label: 'Produtos', roles: MANAGERS },
     { href: 'estoque.html', label: 'Estoque', roles: MANAGERS },
     { href: 'clientes.html', label: 'Clientes' },
+    { href: 'fornecedores.html', label: 'Fornecedores', roles: MANAGERS, module: 'fornecedor' },
+    { href: 'compras.html', label: 'Compras', roles: MANAGERS, module: 'fornecedor' },
     { href: 'cadastro.html', label: 'Cadastros', roles: MANAGERS },
     { href: 'configuracoes.html', label: 'Configurações' }
   ];
@@ -1161,7 +1163,8 @@
   }
 
   const MODULE_LABELS = {
-    fiado: ['A prazo', 'Vendas a prazo e recebimento dos pagamentos.']
+    fiado: ['A prazo', 'Vendas a prazo e recebimento dos pagamentos.'],
+    fornecedor: ['Fornecedores', 'Cadastro de fornecedores e compras de mercadoria (entrada no estoque).']
   };
 
   async function initSettings() {
@@ -1413,6 +1416,318 @@
     });
   }
 
+  /* --------------------- módulo Fornecedor (fornecedores e compras) --------------------- */
+  const formatCnpj = (v) => {
+    const d = onlyDigits(v);
+    return d.length === 14 ? `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}` : (v || '—');
+  };
+
+  const toSupplier = (f) => ({
+    id: f.idFornecedor,
+    name: f.nome,
+    cnpj: f.cnpj,
+    branch: f.ramo || '',
+    status: f.status,
+    phone: f.telefone || '',
+    email: f.email || '',
+    purchases: f.quantidadeCompras || 0,
+    total: f.totalComprado || 0
+  });
+
+  const loadSuppliers = async () => (await api('/Fornecedor')).map(toSupplier);
+
+  // Classe da etiqueta de cada status de compra
+  const PURCHASE_STATUS = {
+    Pendente: { cls: 'warn', label: 'Pendente' },
+    Concluido: { cls: 'good', label: 'Concluído' },
+    Cancelado: { cls: 'bad', label: 'Cancelado' }
+  };
+
+  async function initSuppliers() {
+    if (!$('#suppliersPage')) return;
+
+    const tbody = $('#suppliersBody');
+    const search = $('#supplierSearch');
+    const statusFilter = $('#supplierStatusFilter');
+    const modal = bindModal('#supplierModal', null, ['#closeSupplierModal', '#cancelSupplier']);
+
+    let suppliers = await loadSuppliers();
+
+    function draw() {
+      const term = search.value.trim().toLowerCase();
+      const termDigits = onlyDigits(term);
+      const status = statusFilter.value;
+
+      const filtered = suppliers.filter((s) => {
+        const text = !term || s.name.toLowerCase().includes(term) || s.branch.toLowerCase().includes(term)
+          || (termDigits && s.cnpj.includes(termDigits));
+        return text && (!status || s.status === status);
+      });
+
+      const n = suppliers.length;
+      $('#supplierCount').textContent = `${n} fornecedor${n === 1 ? '' : 'es'} cadastrado${n === 1 ? '' : 's'}`;
+
+      tbody.innerHTML = filtered.length ? filtered.map((s) => `
+        <tr>
+          <td class="td-strong">#${s.id}</td>
+          <td><strong>${esc(s.name)}</strong></td>
+          <td>${formatCnpj(s.cnpj)}</td>
+          <td>${esc(s.branch || '—')}</td>
+          <td>${esc(s.phone || '—')}<div class="muted">${esc(s.email)}</div></td>
+          <td>${s.purchases}</td>
+          <td><strong>${fmt(s.total)}</strong></td>
+          <td><span class="status ${s.status === 'Ativo' ? 'good' : 'bad'}">${esc(s.status)}</span></td>
+          <td>
+            ${s.status === 'Ativo' ? `<a class="btn btn-primary" href="compras.html?fornecedor=${s.id}&nova=1">Comprar</a>` : ''}
+            <button class="btn btn-secondary" data-edit-supplier="${s.id}">Editar</button>
+            <button class="btn btn-danger" data-delete-supplier="${s.id}">Excluir</button>
+          </td>
+        </tr>`).join('') : '<tr><td colspan="9"><div class="empty">Nenhum fornecedor encontrado.</div></td></tr>';
+    }
+
+    function openForm(id = null) {
+      const s = id ? suppliers.find((row) => String(row.id) === String(id)) : null;
+      $('#supplierModalTitle').textContent = s ? `Editar fornecedor #${s.id}` : 'Novo fornecedor';
+      $('#supplierId').value = s?.id || '';
+      $('#supplierName').value = s?.name || '';
+      $('#supplierCnpj').value = s ? formatCnpj(s.cnpj) : '';
+      $('#supplierBranch').value = s?.branch || '';
+      $('#supplierStatus').value = s?.status || 'Ativo';
+      $('#supplierPhone').value = s?.phone || '';
+      $('#supplierEmail').value = s?.email || '';
+      modal.classList.add('open');
+    }
+
+    tbody.addEventListener('click', (e) => {
+      const edit = e.target.closest('[data-edit-supplier]');
+      const del = e.target.closest('[data-delete-supplier]');
+      if (edit) openForm(edit.dataset.editSupplier);
+      if (del) run(async () => {
+        const s = suppliers.find((row) => String(row.id) === del.dataset.deleteSupplier);
+        if (!confirm(`Excluir o fornecedor "${s?.name}"?`)) return;
+        await api(`/Fornecedor/${s.id}`, { method: 'DELETE' });
+        suppliers = await loadSuppliers();
+        toast('Fornecedor excluído.');
+        draw();
+      });
+    });
+
+    $('#newSupplier').addEventListener('click', () => openForm());
+
+    $('#supplierForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      run(async () => {
+        const id = $('#supplierId').value;
+        const body = {
+          nome: $('#supplierName').value.trim(),
+          cnpj: onlyDigits($('#supplierCnpj').value),
+          ramo: $('#supplierBranch').value.trim(),
+          status: $('#supplierStatus').value,
+          telefone: $('#supplierPhone').value.trim(),
+          email: $('#supplierEmail').value.trim()
+        };
+
+        if (id) await api(`/Fornecedor/${id}`, { method: 'PUT', body });
+        else await api('/Fornecedor', { method: 'POST', body });
+
+        suppliers = await loadSuppliers();
+        modal.classList.remove('open');
+        toast('Fornecedor salvo.');
+        draw();
+      });
+    });
+
+    search.addEventListener('input', draw);
+    statusFilter.addEventListener('change', draw);
+    draw();
+  }
+
+  async function initPurchases() {
+    if (!$('#purchasesPage')) return;
+
+    const modal = bindModal('#purchaseModal', '#newPurchase', ['#closePurchaseModal', '#cancelPurchase']);
+
+    let suppliers = await loadSuppliers();
+    const products = await loadProducts();
+    let purchases = [];
+    let items = [];   // itens da compra que está sendo montada
+
+    const supplierName = (id) => suppliers.find((s) => s.id === id)?.name || '';
+
+    // Filtro e formulário
+    $('#purchSupplierFilter').innerHTML = '<option value="">Todos os fornecedores</option>' +
+      suppliers.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+
+    $('#purchSupplier').innerHTML = '<option value="">Selecione o fornecedor</option>' +
+      suppliers.filter((s) => s.status === 'Ativo').map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+
+    $('#purchProduct').innerHTML = products.length
+      ? products.map((p) => `<option value="${p.id}">#${p.id} · ${esc(p.name)} (estoque ${p.stock})</option>`).join('')
+      : '<option value="">Cadastre um produto antes</option>';
+
+    async function cards() {
+      const r = await api('/Compra/resumo');
+      $('#purchSuppliers').textContent = r.fornecedoresAtivos;
+      $('#purchPending').textContent = r.comprasPendentes;
+      $('#purchPendingValue').textContent = fmt(r.totalPendente);
+      $('#purchMonth').textContent = fmt(r.gastoNoMes);
+    }
+
+    async function load() {
+      const supplierId = $('#purchSupplierFilter').value;
+      purchases = await api('/Compra' + (supplierId ? `?fornecedorId=${supplierId}` : ''));
+      draw();
+    }
+
+    function draw() {
+      const status = $('#purchStatusFilter').value;
+      const list = purchases.filter((c) => !status || c.status === status);
+
+      $('#purchList').innerHTML = list.length ? list.map((c) => {
+        const st = PURCHASE_STATUS[c.status] || { cls: 'warn', label: c.status };
+        return `
+          <div class="order-row">
+            <div>
+              <strong>Compra #${c.idCompra} · ${esc(c.nomeFornecedor)}</strong>
+              <span class="status ${st.cls}" style="margin-left:8px">${st.label}</span>
+              <div class="muted">${displayDateTime(c.dataHora)} · total <strong>${fmt(c.totalCompra)}</strong>
+                ${c.totalDesconto > 0 ? `· desconto ${fmt(c.totalDesconto)} (bruto ${fmt(c.totalBruto)})` : ''}</div>
+              <div class="muted">${c.itens.map((i) => `${i.quantidade}× ${esc(i.nomeProduto)} (${fmt(i.precoUnitario)})`).join(' · ')}</div>
+            </div>
+            <div class="order-actions">
+              ${c.status === 'Pendente' ? `
+                <button class="btn btn-primary" data-receive="${c.idCompra}">Receber</button>
+                <button class="btn btn-danger" data-cancel="${c.idCompra}">Cancelar</button>` : ''}
+            </div>
+          </div>`;
+      }).join('') : '<div class="empty">Nenhuma compra encontrada.</div>';
+    }
+
+    $('#purchList').addEventListener('click', (e) => {
+      const receive = e.target.closest('[data-receive]');
+      const cancel = e.target.closest('[data-cancel]');
+
+      if (receive) run(async () => {
+        if (!confirm('A mercadoria chegou? O estoque e o custo dos produtos serão atualizados.')) return;
+        await api(`/Compra/${receive.dataset.receive}/receber`, { method: 'POST' });
+        toast('Compra recebida: estoque atualizado.');
+        await load();
+        await cards();
+      });
+
+      if (cancel) run(async () => {
+        if (!confirm('Cancelar esta compra pendente?')) return;
+        await api(`/Compra/${cancel.dataset.cancel}/cancelar`, { method: 'POST' });
+        toast('Compra cancelada.');
+        await load();
+        await cards();
+      });
+    });
+
+    // Monta os itens da nova compra
+    const itemTotal = (i) => i.qty * i.cost - i.discount;
+
+    function drawItems() {
+      $('#purchItemsBody').innerHTML = items.length ? items.map((i, index) => `
+        <tr>
+          <td>${esc(i.name)}</td>
+          <td>${i.qty}</td>
+          <td>${fmt(i.cost)}</td>
+          <td>${fmt(i.discount)}</td>
+          <td><strong>${fmt(itemTotal(i))}</strong></td>
+          <td><button class="btn btn-danger" type="button" data-remove-item="${index}">×</button></td>
+        </tr>`).join('') : '<tr><td colspan="6"><div class="empty">Nenhum item adicionado.</div></td></tr>';
+
+      $('#purchTotal').textContent = fmt(items.reduce((sum, i) => sum + itemTotal(i), 0));
+    }
+
+    function openForm(supplierId = '') {
+      items = [];
+      $('#purchSupplier').value = supplierId;
+      $('#purchQty').value = 1;
+      $('#purchCost').value = '';
+      $('#purchDiscount').value = 0;
+      $('#purchReceive').checked = false;
+      fillCost();
+      drawItems();
+      modal.classList.add('open');
+    }
+
+    // Sugere o último custo do produto escolhido
+    function fillCost() {
+      const p = products.find((row) => String(row.id) === $('#purchProduct').value);
+      $('#purchCost').value = p ? p.cost : '';
+    }
+
+    $('#newPurchase').addEventListener('click', () => openForm($('#purchSupplierFilter').value));
+    $('#purchProduct').addEventListener('change', fillCost);
+
+    $('#addPurchItem').addEventListener('click', () => {
+      const p = products.find((row) => String(row.id) === $('#purchProduct').value);
+      const qty = Math.floor(Number($('#purchQty').value));
+      const cost = Number($('#purchCost').value);
+      const discount = Number($('#purchDiscount').value || 0);
+
+      if (!p) return toast('Escolha um produto.');
+      if (!Number.isFinite(qty) || qty <= 0) return toast('Informe uma quantidade válida.');
+      if (!Number.isFinite(cost) || cost <= 0) return toast('Informe o custo unitário.');
+      if (discount < 0 || discount > qty * cost) return toast('O desconto deve ficar entre zero e o valor do item.');
+
+      items.push({ productId: p.id, name: p.name, qty, cost, discount });
+      $('#purchQty').value = 1;
+      $('#purchDiscount').value = 0;
+      drawItems();
+    });
+
+    $('#purchItemsBody').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove-item]');
+      if (!btn) return;
+      items.splice(Number(btn.dataset.removeItem), 1);
+      drawItems();
+    });
+
+    $('#purchaseForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      run(async () => {
+        if (!$('#purchSupplier').value) throw new Error('Selecione o fornecedor.');
+        if (!items.length) throw new Error('Adicione pelo menos um item.');
+
+        await api('/Compra', {
+          method: 'POST',
+          body: {
+            idFornecedor: Number($('#purchSupplier').value),
+            receber: $('#purchReceive').checked,
+            itens: items.map((i) => ({
+              produtoId: i.productId,
+              quantidade: i.qty,
+              precoUnitario: i.cost,
+              desconto: i.discount
+            }))
+          }
+        });
+
+        modal.classList.remove('open');
+        toast($('#purchReceive').checked ? 'Compra registrada e estoque atualizado.' : 'Compra registrada como pendente.');
+        await load();
+        await cards();
+      });
+    });
+
+    $('#purchSupplierFilter').addEventListener('change', () => run(load));
+    $('#purchStatusFilter').addEventListener('change', draw);
+
+    // Vindo da tela de fornecedores ("Comprar"): já filtra e abre a nova compra
+    const params = new URLSearchParams(location.search);
+    const fromSupplier = params.get('fornecedor');
+    if (fromSupplier) $('#purchSupplierFilter').value = fromSupplier;
+
+    await load();
+    await cards();
+    drawItems();
+
+    if (params.get('nova') === '1') openForm(fromSupplier || '');
+  }
+
   /* ------------------------------- início ------------------------------- */
   async function boot() {
     if ($('#loginForm')) return initLogin();
@@ -1437,7 +1752,7 @@
 
     await Promise.all([
       run(initDashboard), run(initProducts), run(initStock), run(initCustomers), run(initRegisters),
-      run(initSales), run(initHistory), run(initFiados), run(initSettings)
+      run(initSales), run(initHistory), run(initFiados), run(initSuppliers), run(initPurchases), run(initSettings)
     ]);
   }
 

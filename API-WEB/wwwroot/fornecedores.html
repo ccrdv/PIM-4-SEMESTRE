@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Fornecedores</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="suppliersPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Fornecedores</h1>
+        <p id="supplierCount">0 fornecedores cadastrados</p>
+      </div>
+      <button class="btn btn-primary" id="newSupplier">＋ Novo fornecedor</button>
+    </div>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <input class="input" id="supplierSearch" type="search" placeholder="Buscar por nome, CNPJ ou ramo..." style="flex:1">
+        <select class="select" id="supplierStatusFilter" style="max-width:200px">
+          <option value="">Todos os status</option>
+          <option value="Ativo">Ativos</option>
+          <option value="Inativo">Inativos</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fornecedor</th>
+              <th>CNPJ</th>
+              <th>Ramo</th>
+              <th>Contato</th>
+              <th>Compras</th>
+              <th>Total comprado</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="suppliersBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="supplierModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="supplierModalTitle">Novo fornecedor</h2>
+        <button class="close-btn" id="closeSupplierModal">×</button>
+      </div>
+      <form id="supplierForm">
+        <input type="hidden" id="supplierId">
+        <div class="modal-grid">
+          <div class="field">
+            <label for="supplierName">Nome</label>
+            <input class="input" id="supplierName" maxlength="100" required>
+          </div>
+          <div class="field">
+            <label for="supplierCnpj">CNPJ</label>
+            <input class="input" id="supplierCnpj" maxlength="18" placeholder="00.000.000/0000-00" required>
+          </div>
+          <div class="field">
+            <label for="supplierBranch">Ramo</label>
+            <input class="input" id="supplierBranch" maxlength="30" placeholder="Ex.: Bebidas">
+          </div>
+          <div class="field">
+            <label for="supplierStatus">Status</label>
+            <select class="select" id="supplierStatus">
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="supplierPhone">Telefone</label>
+            <input class="input" id="supplierPhone" maxlength="15" placeholder="(00) 00000-0000">
+          </div>
+          <div class="field">
+            <label for="supplierEmail">E-mail</label>
+            <input class="input" id="supplierEmail" type="email" maxlength="100">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="cancelSupplier">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Salvar fornecedor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=13"></script>
+</body>
+</html>

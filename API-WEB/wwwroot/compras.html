@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema White Label - Compras</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="purchasesPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Compras</h1>
+        <p>Mercadoria comprada dos fornecedores · ao receber, o estoque e o custo do produto são atualizados</p>
+      </div>
+      <button class="btn btn-primary" id="newPurchase">＋ Nova compra</button>
+    </div>
+
+    <section class="metrics">
+      <article class="card metric">
+        <div class="metric-label">Fornecedores ativos</div>
+        <div class="metric-value" id="purchSuppliers">0</div>
+        <div class="metric-foot">Podem receber compras</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Compras pendentes</div>
+        <div class="metric-value" id="purchPending">0</div>
+        <div class="metric-foot">Aguardando a mercadoria</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Valor pendente</div>
+        <div class="metric-value" id="purchPendingValue">R$ 0,00</div>
+        <div class="metric-foot">Soma das compras pendentes</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Comprado no mês</div>
+        <div class="metric-value" id="purchMonth">R$ 0,00</div>
+        <div class="metric-foot">Compras recebidas neste mês</div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <select class="select" id="purchSupplierFilter" style="flex:1"></select>
+        <select class="select" id="purchStatusFilter" style="max-width:200px">
+          <option value="">Todos os status</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Concluido">Concluído</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div id="purchList"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="purchaseModal">
+    <div class="modal" style="max-width:760px;width:100%">
+      <div class="modal-head">
+        <h2>Nova compra</h2>
+        <button class="close-btn" id="closePurchaseModal">×</button>
+      </div>
+      <form id="purchaseForm">
+        <div class="field">
+          <label for="purchSupplier">Fornecedor</label>
+          <select class="select" id="purchSupplier" required></select>
+        </div>
+
+        <div class="modal-grid" style="margin-top:14px">
+          <div class="field" style="grid-column:1/-1">
+            <label for="purchProduct">Produto</label>
+            <select class="select" id="purchProduct"></select>
+          </div>
+          <div class="field">
+            <label for="purchQty">Quantidade</label>
+            <input class="input" id="purchQty" type="number" min="1" step="1" value="1">
+          </div>
+          <div class="field">
+            <label for="purchCost">Custo unitário (R$)</label>
+            <input class="input" id="purchCost" type="number" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="purchDiscount">Desconto do item (R$)</label>
+            <input class="input" id="purchDiscount" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="field" style="align-self:end">
+            <button class="btn btn-secondary" type="button" id="addPurchItem" style="width:100%">Adicionar item</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="table">
+            <thead>
+              <tr><th>Produto</th><th>Qtd</th><th>Custo</th><th>Desconto</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody id="purchItemsBody"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:12px;flex-wrap:wrap">
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="purchReceive">
+            <span>Mercadoria já recebida (soma no estoque agora)</span>
+          </label>
+          <div><span class="muted">Total da compra</span> <strong id="purchTotal" style="font-size:20px">R$ 0,00</strong></div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="cancelPurchase">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Registrar compra</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js?v=13"></script>
+</body>
+</html>

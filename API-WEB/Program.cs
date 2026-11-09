@@ -10,6 +10,7 @@ using SistemaWhiteLabel.API.Repositories;
 using SistemaWhiteLabel.API.Services.Interfaces;
 using SistemaWhiteLabel.API.Services;
 using SistemaWhiteLabel.API.Modules.Fiado;
+using SistemaWhiteLabel.API.Modules.Fornecedor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,6 +142,7 @@ builder.Services.AddScoped<ComprovanteService>();
 // ====================== MÓDULOS ======================
 // Cada módulo se registra aqui; ligar/desligar é feito pela API (PUT /api/Modulos/{nome})
 builder.Services.AddFiadoModule();
+builder.Services.AddFornecedorModule();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
