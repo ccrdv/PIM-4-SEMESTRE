@@ -1,3 +1,5 @@
+@view-transition { navigation: auto; }
+
 :root {
   --green: #00a56b;
   --green-dark: #008a59;
@@ -17,6 +19,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --bg: #111714;
   --surface: #18211d;
   --surface-2: #1d2924;

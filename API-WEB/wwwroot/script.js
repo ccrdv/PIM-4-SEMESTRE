@@ -164,13 +164,24 @@
   let modules = {};
   const moduleOn = (name) => !!modules[name];
 
+  // Guarda o estado dos módulos no navegador (por domínio): o menu aparece na hora, sem esperar a API,
+  // e a resposta da API logo depois confirma ou corrige.
+  function readModulesCache() {
+    try {
+      return JSON.parse(localStorage.getItem('app_modules') || '{}') || {};
+    } catch {
+      return {};
+    }
+  }
+
   async function loadModules() {
     try {
       const list = await api('/Modulos');
       modules = {};
       list.forEach((m) => (modules[m.nome] = m.ativo));
+      try { localStorage.setItem('app_modules', JSON.stringify(modules)); } catch { /* sem cache */ }
     } catch {
-      modules = {};
+      // sem resposta da API: mantém o que já estava (cache)
     }
   }
 
@@ -209,15 +220,25 @@
     return true;
   }
 
+  // O tema fica em localStorage (app_theme), no domínio todo: a tag <script> no <head> de cada página
+  // aplica antes de desenhar a tela, e esta função só mantém tudo igual (inclusive em outras abas abertas).
   function applyTheme() {
     document.documentElement.dataset.theme = Prefs.theme;
+  }
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'app_theme') applyTheme();
+  });
+
+  function navLinks() {
+    const current = currentPage();
+    return menu.filter(canSee).map((item) =>
+      `<a class="nav-link ${current === item.href ? 'active' : ''}" href="${item.href}">${item.label}</a>`
+    ).join('');
   }
 
   function buildShell() {
     applyTheme();
     if ($('.header')) return;
-
-    const current = currentPage();
 
     document.body.insertAdjacentHTML('afterbegin', `
       <header class="header">
@@ -232,11 +253,7 @@
           <strong>${BRAND}</strong>
           <button class="close-btn" id="closeDrawer" aria-label="Fechar menu">×</button>
         </div>
-        <nav class="drawer-nav">
-          ${menu.filter(canSee).map((item) =>
-            `<a class="nav-link ${current === item.href ? 'active' : ''}" href="${item.href}">${item.label}</a>`
-          ).join('')}
-        </nav>
+        <nav class="drawer-nav">${navLinks()}</nav>
         <div class="drawer-foot">
           <div>${esc(Session.username)} · ${esc(Session.role)}</div>
           <button class="btn btn-secondary" id="drawerLogout" style="margin-top:10px;width:100%">Sair</button>
@@ -1739,10 +1756,14 @@
       return;
     }
 
-    await loadModules();
-    if (!guardPage()) return;
-
+    applyTheme();
+    modules = readModulesCache();   // menu na hora, com o que o navegador já sabe
     buildShell();
+
+    const antes = JSON.stringify(modules);
+    await loadModules();            // confirma com a API
+    if (JSON.stringify(modules) !== antes) $('.drawer-nav').innerHTML = navLinks();
+    if (!guardPage()) return;
 
     const flash = sessionStorage.getItem('flash');
     if (flash) {

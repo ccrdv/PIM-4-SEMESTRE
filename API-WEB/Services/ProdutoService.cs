@@ -91,7 +91,18 @@ namespace SistemaWhiteLabel.API.Services
                 EstoqueMinimo = dto.EstoqueMinimo ?? 10
             };
 
-            await _repository.AddAsync(produto);
+            // O id é sempre gerado pelo banco: qualquer id que venha do aplicativo (provisório) é ignorado
+            produto.IdProduto = 0;
+
+            try
+            {
+                await _repository.AddAsync(produto);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("ORA-00001") == true)
+            {
+                // Chave repetida: o contador de ids do banco ficou atrás dos ids que já existem (Banco/07_ajuste_identity.sql)
+                throw new Exception("Não foi possível gerar o id do produto: o contador de ids do banco está atrasado. Rode o script 07_ajuste_identity.sql.");
+            }
 
             return await GetByIdAsync(produto.IdProduto) ?? throw new Exception("Erro ao criar produto");
         }
