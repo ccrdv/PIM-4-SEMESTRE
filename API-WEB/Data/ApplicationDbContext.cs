@@ -29,12 +29,28 @@ namespace SistemaWhiteLabel.API.Data
         public DbSet<StatusCompra> StatusCompras { get; set; }
         public DbSet<Compra> Compras { get; set; }
         public DbSet<ItemCompra> ItensCompra { get; set; }
+        public DbSet<FechamentoDia> Fechamentos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasDefaultSchema("PIM");
+
+            // View de relatório (Banco/08_procedures_views.sql): só leitura, sem chave
+            modelBuilder.Entity<FechamentoDia>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("sv_vendas_relatorio_fechamento");
+                entity.Property(f => f.Data).HasColumnName("data_fechamento");
+                entity.Property(f => f.QtdeVendas).HasColumnName("qtde_vendas");
+                entity.Property(f => f.TotalBruto).HasColumnName("total_bruto").HasPrecision(12, 2);
+                entity.Property(f => f.TotalDescontos).HasColumnName("total_descontos").HasPrecision(12, 2);
+                entity.Property(f => f.TotalLiquido).HasColumnName("total_liquido").HasPrecision(12, 2);
+                entity.Property(f => f.TotalDinheiro).HasColumnName("total_dinheiro").HasPrecision(12, 2);
+                entity.Property(f => f.TotalPix).HasColumnName("total_pix").HasPrecision(12, 2);
+                entity.Property(f => f.TotalCartao).HasColumnName("total_cartao").HasPrecision(12, 2);
+            });
 
             // ====================== PESSOA ======================
             modelBuilder.Entity<Pessoa>(entity =>

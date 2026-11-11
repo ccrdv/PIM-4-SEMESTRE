@@ -1,6 +1,6 @@
 # Sistema White Label – API e Web
 
-API REST em **ASP.NET Core 9** e interface web do **Sistema White Label**, um sistema de gestão comercial para comércios de compra e revenda (mercados, distribuidores). A mesma aplicação entrega as páginas web e atende o [aplicativo mobile](../API-APP).
+API REST em **ASP.NET Core 9** e interface web do **Sistema White Label**, um sistema de gestão comercial para comércios de compra e revenda (mercados, distribuidores). A mesma aplicação entrega as páginas web e atende o [aplicativo mobile](../API-Mobile).
 
 Projeto Integrador Multidisciplinar (PIM) do 4º semestre – ADS, UNIP.
 
@@ -10,7 +10,7 @@ Projeto Integrador Multidisciplinar (PIM) do 4º semestre – ADS, UNIP.
 PIM-4-SEMESTRE
 ├── API-WEB    ← você está aqui (API + interface web)
 ├── Banco      ← scripts SQL do Oracle
-└── API-APP    ← aplicativo Flutter
+└── API-Mobile    ← aplicativo Flutter
 ```
 
 ## O que o sistema faz
@@ -19,7 +19,7 @@ PIM-4-SEMESTRE
 - Perfis de acesso: **Administrador**, **Gerente** e **Vendedor**
 - Vendas (PDV) com dinheiro, Pix e cartão, desconto e **recibo em PDF**
 - Produtos, categorias, estoque com **estoque mínimo** e alerta de estoque baixo
-- Clientes, histórico de vendas e dashboard por período (valores brutos e líquidos)
+- Clientes, histórico de vendas, dashboard e **relatório de fechamento por período** (valores brutos e líquidos)
 - **Módulos que podem ser ligados e desligados** em Configurações:
   - **A prazo** – vendas a prazo e valores a receber
   - **Fornecedor** – fornecedores e compras, com entrada automática no estoque
@@ -52,7 +52,7 @@ API-WEB
 └── appsettings.json
 ```
 
-A API segue o padrão **Controller → Service → DbContext**: o controller recebe a requisição e confere o perfil; o service concentra a regra de negócio; o DbContext acessa o Oracle.
+A API segue o padrão **Controller → Service → DbContext**: o controller recebe a requisição e confere o perfil; o service concentra a regra de negócio; o DbContext acessa o Oracle. A baixa de estoque da venda e o recebimento de compra são feitos por **procedures do banco** (`Banco/08_procedures_views.sql`), chamadas pelo `Helpers/ProcedureHelper.cs` dentro da transação da API.
 
 ## Como rodar
 
@@ -64,7 +64,7 @@ A API segue o padrão **Controller → Service → DbContext**: o controller rec
 Rode os scripts em ordem, conforme o [README do Banco](../Banco/README.md).
 
 ### 2. Configuração
-Edite o `appsettings.json`:
+Copie o `appsettings.example.json` para `appsettings.json` (esse arquivo não vai para o GitHub) e preencha:
 
 | Chave | O que é |
 |---|---|
@@ -73,7 +73,7 @@ Edite o `appsettings.json`:
 | `JwtSettings:AccessTokenExpirationMinutes` | Duração da sessão do navegador (60) |
 | `Dispositivos:DiasDeSessao` / `LimiteDias` | Sessão do celular (3 dias) e limite com renovações (30) |
 
-> Não suba para o GitHub a senha real do banco nem a chave JWT de uma instalação em uso.
+> O `appsettings.json` está no `.gitignore`: a senha do banco e a chave JWT ficam só na máquina de cada um.
 
 ### 3. Executar
 ```bash
@@ -94,7 +94,7 @@ O script `02_pim_ajustes_app.sql` cria o usuário inicial `admin`. **Troque a se
 | Tela | Administrador | Gerente | Vendedor |
 |---|:-:|:-:|:-:|
 | Dashboard, Nova venda, Histórico, Clientes | ✔ | ✔ | ✔ |
-| Produtos, Estoque, Cadastros | ✔ | ✔ | — |
+| Produtos, Estoque, Cadastros, Relatórios | ✔ | ✔ | — |
 | Fornecedores e Compras (módulo) | ✔ | ✔ | — |
 | Ligar/desligar módulos | ✔ | — | — |
 
@@ -107,7 +107,7 @@ Novos usuários são criados pelo Administrador em `POST /api/Funcionario`.
 | `api/Auth` | `POST login`, `2fa/configurar`, `2fa/ativar`, `2fa/verificar`, `logout`, `GET check-token` |
 | `api/Venda`, `api/Comprovante` | registrar e consultar vendas; recibo em PDF |
 | `api/Produto`, `api/Categoria`, `api/Estoque`, `api/Cliente` | cadastros e estoque |
-| `api/Dashboard` | indicadores por período |
+| `api/Dashboard` | indicadores por período; `GET fechamento?de=&ate=` (relatório por dia, lido da view do banco) |
 | `api/Modulos` | `GET` e `PUT {nome}` (liga/desliga) |
 | `api/Dispositivo` | `POST pareamento` (gera o QR), `POST parear` (celular), lista, renovar e revogar |
 | `api/Fiado` *(módulo)* | resumo, listar, pagar, histórico do cliente |

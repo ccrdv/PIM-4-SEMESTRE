@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('app_theme')||'light'}catch(e){}</script>
+  <title>Sistema White Label - Relatórios</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="reportPage">
+    <div class="page-head">
+      <div class="page-title">
+        <h1>Relatórios</h1>
+        <p>Fechamento por dia · líquido = com desconto, bruto = sem desconto · vendas canceladas não entram</p>
+      </div>
+    </div>
+
+    <section class="metrics">
+      <article class="card metric">
+        <div class="metric-label">Vendas realizadas</div>
+        <div class="metric-value" id="reportSales">0</div>
+        <div class="metric-foot">No período escolhido</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Faturamento bruto</div>
+        <div class="metric-value" id="reportGross">R$ 0,00</div>
+        <div class="metric-foot">Sem os descontos</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Descontos</div>
+        <div class="metric-value" id="reportDiscount">R$ 0,00</div>
+        <div class="metric-foot">Concedidos no período</div>
+      </article>
+      <article class="card metric">
+        <div class="metric-label">Faturamento líquido</div>
+        <div class="metric-value" id="reportNet">R$ 0,00</div>
+        <div class="metric-foot">Com os descontos</div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-toolbar">
+        <div class="field" style="min-width:180px">
+          <label for="reportFrom">De</label>
+          <input class="input" id="reportFrom" type="date">
+        </div>
+        <div class="field" style="min-width:180px">
+          <label for="reportTo">Até</label>
+          <input class="input" id="reportTo" type="date">
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Dia</th>
+              <th>Vendas</th>
+              <th>Bruto</th>
+              <th>Desconto</th>
+              <th>Líquido</th>
+              <th>Dinheiro</th>
+              <th>Pix</th>
+              <th>Cartão</th>
+            </tr>
+          </thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js?v=15"></script>
+</body>
+</html>

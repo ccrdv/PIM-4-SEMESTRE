@@ -1,3 +1,5 @@
+using SistemaWhiteLabel.API.Models;
+
 namespace SistemaWhiteLabel.API.DTOs
 {
     // Resumo de um período. Líquido = com o desconto já abatido; Bruto = preço cheio, sem desconto.
@@ -58,5 +60,19 @@ namespace SistemaWhiteLabel.API.DTOs
         public int Quantidade { get; set; }
         public decimal Liquido { get; set; }
         public decimal Bruto { get; set; }
+    }
+
+    // Relatório de fechamento (tela Relatórios): totais do período e uma linha por dia
+    public class FechamentoDto
+    {
+        public DateTime De { get; set; }
+        public DateTime Ate { get; set; }
+
+        public int QuantidadeVendas { get; set; }
+        public decimal TotalBruto { get; set; }
+        public decimal TotalDescontos { get; set; }
+        public decimal TotalLiquido { get; set; }
+
+        public List<FechamentoDia> Dias { get; set; } = new();
     }
 }

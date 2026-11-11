@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SistemaWhiteLabel.API.DTOs;
 using SistemaWhiteLabel.API.Data;
@@ -155,6 +156,38 @@ namespace SistemaWhiteLabel.API.Controllers
                 .ToList();
 
             return Ok(dashboard);
+        }
+
+        /// <summary>
+        /// Relatório de fechamento por dia, lido da view sv_vendas_relatorio_fechamento.
+        /// De e ate no formato yyyy-MM-dd (os dois dias entram). Sem datas: os últimos 30 dias
+        /// </summary>
+        [HttpGet("fechamento")]
+        [Authorize(Roles = "Administrador,Gerente")]
+        public async Task<ActionResult<FechamentoDto>> GetFechamento([FromQuery] DateTime? de, [FromQuery] DateTime? ate)
+        {
+            var fim = (ate ?? DateTime.Today).Date;
+            var inicio = (de ?? fim.AddDays(-29)).Date;
+
+            if (inicio > fim)
+                return BadRequest(new { mensagem = "A data inicial não pode ser maior que a data final." });
+
+            var dias = await _context.Fechamentos
+                .AsNoTracking()
+                .Where(f => f.Data >= inicio && f.Data <= fim)
+                .OrderBy(f => f.Data)
+                .ToListAsync();
+
+            return Ok(new FechamentoDto
+            {
+                De = inicio,
+                Ate = fim,
+                QuantidadeVendas = dias.Sum(d => d.QtdeVendas),
+                TotalBruto = dias.Sum(d => d.TotalBruto),
+                TotalDescontos = dias.Sum(d => d.TotalDescontos),
+                TotalLiquido = dias.Sum(d => d.TotalLiquido),
+                Dias = dias
+            });
         }
     }
 }

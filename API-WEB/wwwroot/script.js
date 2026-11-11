@@ -190,6 +190,7 @@
     { href: 'index.html', label: 'Dashboard' },
     { href: 'vendas.html', label: 'Nova venda' },
     { href: 'historico.html', label: 'Histórico de vendas' },
+    { href: 'relatorios.html', label: 'Relatórios', roles: MANAGERS },
     { href: 'aprazo.html', label: 'A prazo', module: 'fiado' },
     { href: 'produtos.html', label: 'Produtos', roles: MANAGERS },
     { href: 'estoque.html', label: 'Estoque', roles: MANAGERS },
@@ -1080,6 +1081,47 @@
     draw();
   }
 
+  // Relatórios: fechamento por dia no período escolhido (a API lê a view sv_vendas_relatorio_fechamento)
+  async function initReports() {
+    if (!$('#reportPage')) return;
+
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - 29);
+
+    $('#reportFrom').value = isoDate(start);
+    $('#reportTo').value = isoDate(today);
+
+    async function draw() {
+      const from = $('#reportFrom').value;
+      const to = $('#reportTo').value;
+      if (!from || !to) return;
+
+      const r = await api(`/Dashboard/fechamento?de=${from}&ate=${to}`);
+
+      $('#reportSales').textContent = r.quantidadeVendas;
+      $('#reportGross').textContent = fmt(r.totalBruto);
+      $('#reportDiscount').textContent = fmt(r.totalDescontos);
+      $('#reportNet').textContent = fmt(r.totalLiquido);
+
+      $('#reportBody').innerHTML = r.dias.length ? r.dias.map((d) => `
+          <tr>
+            <td class="td-strong">${displayDate(d.data)}</td>
+            <td>${d.qtdeVendas}</td>
+            <td>${fmt(d.totalBruto)}</td>
+            <td>${d.totalDescontos ? '- ' + fmt(d.totalDescontos) : '—'}</td>
+            <td class="td-strong">${fmt(d.totalLiquido)}</td>
+            <td>${fmt(d.totalDinheiro)}</td>
+            <td>${fmt(d.totalPix)}</td>
+            <td>${fmt(d.totalCartao)}</td>
+          </tr>`).join('') : '<tr><td colspan="8"><div class="empty">Nenhuma venda no período.</div></td></tr>';
+    }
+
+    $('#reportFrom').addEventListener('change', () => run(draw));
+    $('#reportTo').addEventListener('change', () => run(draw));
+    await draw();
+  }
+
   // A prazo (módulo): quem deve, vendas pendentes, recebimento com recibo em PDF e histórico por cliente
   async function initFiados() {
     if (!$('#fiadoPage')) return;
@@ -1773,7 +1815,7 @@
 
     await Promise.all([
       run(initDashboard), run(initProducts), run(initStock), run(initCustomers), run(initRegisters),
-      run(initSales), run(initHistory), run(initFiados), run(initSuppliers), run(initPurchases), run(initSettings)
+      run(initSales), run(initHistory), run(initReports), run(initFiados), run(initSuppliers), run(initPurchases), run(initSettings)
     ]);
   }
 

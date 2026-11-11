@@ -108,9 +108,6 @@ namespace SistemaWhiteLabel.API.Services
 
                     venda.Itens.Add(item);
                     totalVenda += valorTotalItem;
-
-                    produto.Qtde -= itemDto.Quantidade;
-                    await _produtoRepository.UpdateAsync(produto);
                 }
 
                 // Desconto da venda inteira: dividido entre os itens, proporcional ao valor de cada um
@@ -166,6 +163,10 @@ namespace SistemaWhiteLabel.API.Services
 
                 // Salva a venda primeiro
                 await _vendaRepository.AddAsync(venda);
+
+                // A baixa do estoque é feita pela procedure do banco, nesta mesma transação:
+                // se faltar estoque de algum item, ela dá erro e a venda inteira é desfeita
+                await ProcedureHelper.ExecutarAsync(_context, ProcedureHelper.BAIXAR_ESTOQUE_VENDA, venda.IdVenda);
 
                 if (dto.IsFiado)
                 {

@@ -8,7 +8,7 @@ Projeto Integrador Multidisciplinar (PIM) do 4º semestre – ADS, UNIP.
 PIM-4-SEMESTRE
 ├── API-WEB    ← API e interface web
 ├── Banco      ← você está aqui
-└── API-APP    ← aplicativo Flutter
+└── API-Mobile    ← aplicativo Flutter
 ```
 
 ## Como executar
@@ -24,12 +24,23 @@ Conectado como `PIM` (SQL Developer → *Executar script*), rode **nesta ordem**
 | `05_normalizacao_nomes.sql` | **Padroniza os nomes**, confere os tipos, cria `tb_dispositivo` e recria as views |
 | `06_modulo_fornecedor.sql` | Módulo **Fornecedor**: registro em `tb_modulo`, CNPJ único, status e regras nas tabelas de compra |
 | `07_ajuste_identity.sql` | Realinha o contador de ids de todas as tabelas. Resolve erro de id (ORA-00001) ao cadastrar produto pelo celular ou pela web |
+| `08_procedures_views.sql` | **Procedures** de estoque (`sp_baixar_estoque_venda`, `sp_receber_compra`) e views de relatório. **Obrigatório:** a API chama as procedures ao vender e ao receber uma compra |
 
 - **Banco novo:** rode 01, 02, 03, 04, 05 e, se for usar o módulo Fornecedor, o 06.
 - O **07** pode ser rodado a qualquer momento depois do 05, e de novo sempre que um cadastro der erro de id.
 - **Banco que já passou pelo 01–04:** rode só o 05 (e o 06).
 - Os scripts 01 a 04 são o **histórico** e usam os nomes antigos (`tbl_`, maiúsculas); o 05 converte tudo para o padrão atual.
 - No 06, os erros `ORA-01442`, `ORA-02260`, `ORA-02264`, `ORA-02275` e `ORA-00955` significam "já existe" e podem ser ignorados. `ORA-02296` ou `ORA-01407` indicam linhas antigas incompletas nas tabelas de compra.
+
+## Dados de teste (opcional)
+
+Na pasta `teste/`, fora da ordem de instalação (rode depois dos scripts 01 a 08):
+
+| Script | O que faz |
+|---|---|
+| `teste/popular_dados_teste.sql` | Cria usuários `gerente` e `vendedor` (senha `teste123`), 8 clientes, 25 produtos em 5 categorias, 5 fornecedores, 4 compras, 60 vendas dos últimos 30 dias e 6 vendas a prazo. Pode rodar mais de uma vez |
+| `teste/limpar_dados_teste.sql` | Apaga só o que o script acima criou |
+| `teste/renumerar_produtos.sql` | Renumera os produtos de 1 a 5, trocando o id também nos itens de venda e de compra (mantém o histórico) |
 
 ## Padrão de nomes
 
@@ -61,14 +72,19 @@ SELECT * FROM "PIM"."tb_pessoa";
 
 | View | Conteúdo |
 |---|---|
-| `sv_cliente_dados` | Dados do cliente e endereço completo |
+| `sv_cliente_dados` | Dados do cliente e o seu endereço |
 | `sv_usuario_dados` | Dados do usuário e perfil, sem senha nem chave do 2FA |
-| `sv_venda_relatorio` | Cada venda com cliente, vendedor, pagamento e valores |
-| `sv_vendas_relatorio_fechamento` | Vendas consolidadas por período (valores bruto e líquido) |
+| `sv_venda_relatorio` | Cada item vendido, com produto, valores, cliente e vendedor |
+| `sv_vendas_relatorio_fechamento` | Fechamento por dia: quantidade de vendas, bruto, descontos, líquido e totais por forma de pagamento. É lida pela tela **Relatórios** |
 
 ## Procedures
 
-As operações que alteram várias tabelas de uma vez (**registro de venda** com baixa de estoque e **recebimento de compra** com entrada no estoque) serão encapsuladas em procedures PL/SQL. Quando forem criadas, entrarão como novos scripts numerados nesta pasta (08 em diante).
+Procedures PL/SQL com prefixo **`sp_`**, criadas no script 08 e chamadas pela API dentro da mesma transação:
+
+| Procedure | O que faz |
+|---|---|
+| `sp_baixar_estoque_venda(id_venda)` | Tira do estoque os itens da venda. Se faltar estoque de algum produto, dá erro e a API desfaz a venda inteira |
+| `sp_receber_compra(id_compra)` | A compra Pendente vira Concluído, a quantidade de cada item entra no estoque e o preço de compra do produto é atualizado |
 
 ## Observações
 

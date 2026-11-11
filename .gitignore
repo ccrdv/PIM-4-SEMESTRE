@@ -1,0 +1,17 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+
+# Configuração local (senha do banco e chave JWT): use o appsettings.example.json como modelo
+API-WEB/appsettings.json
+
+# Flutter
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Bancos locais
+*.db

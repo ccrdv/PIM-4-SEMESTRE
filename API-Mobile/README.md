@@ -8,7 +8,7 @@ Projeto Integrador Multidisciplinar (PIM) do 4º semestre – ADS, UNIP.
 PIM-4-SEMESTRE
 ├── API-WEB    ← API e interface web (gera o QR code)
 ├── Banco      ← scripts SQL do Oracle
-└── API-APP    ← você está aqui
+└── API-Mobile    ← você está aqui
 ```
 
 ## Como funciona
@@ -34,7 +34,7 @@ PIM-4-SEMESTRE
 ## Estrutura da pasta
 
 ```
-API-APP
+API-Mobile
 ├── lib/
 │   ├── main.dart, homepage.dart
 │   ├── core/            tema, rotas e navegação

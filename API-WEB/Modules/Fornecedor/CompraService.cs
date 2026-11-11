@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SistemaWhiteLabel.API.Data;
+using SistemaWhiteLabel.API.Helpers;
 using SistemaWhiteLabel.API.Models;
 
 namespace SistemaWhiteLabel.API.Modules.Fornecedor
@@ -158,18 +159,15 @@ namespace SistemaWhiteLabel.API.Modules.Fornecedor
                 compra.TotalDesconto = compra.Itens.Sum(i => i.ValorDesconto);
                 compra.TotalCompra = compra.Itens.Sum(i => i.ValorTotal);
 
-                if (dto.Receber)
-                {
-                    compra.IdStatusCompra = (await BuscarStatusAsync(CONCLUIDO)).IdStatusCompra;
-                    SomarNoEstoque(compra, produtos);
-                }
-                else
-                {
-                    compra.IdStatusCompra = (await BuscarStatusAsync(PENDENTE)).IdStatusCompra;
-                }
+                // Toda compra nasce Pendente; o recebimento (estoque, custo e status) é feito pela procedure do banco
+                compra.IdStatusCompra = (await BuscarStatusAsync(PENDENTE)).IdStatusCompra;
 
                 _context.Compras.Add(compra);
                 await _context.SaveChangesAsync();
+
+                if (dto.Receber)
+                    await ProcedureHelper.ExecutarAsync(_context, ProcedureHelper.RECEBER_COMPRA, compra.IdCompra);
+
                 await transaction.CommitAsync();
 
                 return (await GetByIdAsync(compra.IdCompra))!;
@@ -183,31 +181,26 @@ namespace SistemaWhiteLabel.API.Modules.Fornecedor
 
         // ====================== RECEBER / CANCELAR ======================
 
-        // A mercadoria chegou: soma no estoque e a compra vira Concluido
+        // A mercadoria chegou: a procedure do banco soma no estoque, atualiza o custo e a compra vira Concluido
         public async Task<CompraResponseDto> ReceberAsync(int id)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var compra = await ComprasCompletas().FirstOrDefaultAsync(c => c.IdCompra == id);
+                var compra = await _context.Compras
+                    .AsNoTracking()
+                    .Include(c => c.StatusCompra)
+                    .FirstOrDefaultAsync(c => c.IdCompra == id);
+
                 if (compra == null)
                     throw new KeyNotFoundException("Compra não encontrada.");
 
                 if (compra.StatusCompra?.Descricao != PENDENTE)
                     throw new Exception("Só é possível receber uma compra Pendente.");
 
-                var produtos = compra.Itens
-                    .Where(i => i.Produto != null)
-                    .Select(i => i.Produto!)
-                    .DistinctBy(p => p.IdProduto)
-                    .ToDictionary(p => p.IdProduto);
+                await ProcedureHelper.ExecutarAsync(_context, ProcedureHelper.RECEBER_COMPRA, id);
 
-                SomarNoEstoque(compra, produtos);
-
-                compra.StatusCompra = await BuscarStatusAsync(CONCLUIDO);
-
-                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 return (await GetByIdAsync(id))!;
@@ -240,19 +233,6 @@ namespace SistemaWhiteLabel.API.Modules.Fornecedor
         }
 
         // ====================== AUXILIARES ======================
-
-        // Entrada no estoque: soma a quantidade e atualiza o custo do produto com o custo desta compra
-        // (custo por unidade já descontado)
-        private static void SomarNoEstoque(Compra compra, Dictionary<int, Produto> produtos)
-        {
-            foreach (var item in compra.Itens)
-            {
-                var produto = produtos[item.IdProduto];
-
-                produto.Qtde += item.Qdte;
-                produto.PrecoCompra = Math.Round(item.ValorTotal / item.Qdte, 2);
-            }
-        }
 
         private async Task<StatusCompra> BuscarStatusAsync(string descricao)
         {
